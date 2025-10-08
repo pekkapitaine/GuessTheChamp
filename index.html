@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Devine le Champion</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container" id="welcome-screen">
+    <h1>Devine le Champion 🏆</h1>
+    <p>Choisis ton mode :</p>
+    <button id="mode-infinite-btn">Mode Infini</button>
+    <button id="mode-challenge-btn">Mode Défi</button>
+  </div>
+
+  <!-- Section Jeu Infini -->
+  <div class="container" id="infinite-mode" style="display:none;">
+    <h2>Mode Infini</h2>
+    <div class="options">
+      <label for="difficulty">Difficulté :</label>
+      <select id="difficulty">
+        <option value="easy">Easy</option>
+        <option value="medium">Medium</option>
+        <option value="hard">Hard</option>
+        <option value="extreme">Extreme</option>
+      </select>
+
+      <label for="include-skins">
+        <input type="checkbox" id="include-skins">
+        Inclure les skins
+      </label>
+
+      <label for="timer">Timer (sec) :</label>
+      <input type="number" id="timer" value="30" min="5" max="120">
+    </div>
+
+    <div class="image-container">
+      <img id="champ-image" src="" alt="Champion Pixelisé">
+    </div>
+
+    <div class="guess">
+      <input type="text" id="champ-input" placeholder="Tape le nom du champion...">
+      <div id="suggestions" class="suggestions"></div>
+      <button id="submit-guess">Valider</button>
+    </div>
+
+    <div id="feedback"></div>
+    <button id="back-from-infinite">Retour</button>
+  </div>
+
+  <!-- Section Mode Défi -->
+  <div class="container" id="challenge-mode" style="display:none;">
+    <h2>Mode Défi</h2>
+    <p>10 champions à deviner en moins de 30s !</p>
+    <div class="image-container">
+      <img id="champ-image-challenge" src="" alt="Champion Pixelisé">
+    </div>
+    <div class="guess">
+      <input type="text" id="champ-input-challenge" placeholder="Tape le nom du champion...">
+      <div id="suggestions-challenge" class="suggestions"></div>
+      <button id="submit-guess-challenge">Valider</button>
+    </div>
+    <div id="feedback-challenge"></div>
+    <button id="back-from-challenge">Retour</button>
+  </div>
+
+  <script src="app.js"></script>
+  <script src="sw.js"></script>
+</body>
+</html>

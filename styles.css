@@ -1,0 +1,66 @@
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: #1e1e2f;
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  margin: 0;
+}
+
+.container {
+  max-width: 600px;
+  width: 90%;
+  text-align: center;
+}
+
+.options, .guess, .game-modes {
+  margin: 15px 0;
+}
+
+.image-container {
+  margin: 20px 0;
+}
+
+#champ-image {
+  max-width: 100%;
+  height: auto;
+  border: 2px solid #fff;
+  border-radius: 8px;
+}
+
+input, select, button {
+  padding: 8px;
+  margin: 5px;
+  border-radius: 5px;
+  border: none;
+}
+
+button {
+  background-color: #4caf50;
+  color: white;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #45a049;
+}
+
+.suggestions {
+  background: #333;
+  color: #fff;
+  max-height: 100px;
+  overflow-y: auto;
+  margin-top: 5px;
+  border-radius: 5px;
+  text-align: left;
+  padding: 5px;
+}
+.suggestions div {
+  padding: 3px;
+  cursor: pointer;
+}
+.suggestions div:hover {
+  background: #555;
+}
