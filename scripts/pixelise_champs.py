@@ -23,29 +23,31 @@ SKINS_DIFFICULTIES = {
     "extreme": 30
 }
 
-# Crée les dossiers si inexistants
-for level in SKINS_DIFFICULTIES.keys():
-    os.makedirs(os.path.join(SKINS_TARGET_DIR, level), exist_ok=True)
+for (source,target,difficulty) in [(SOURCE_DIR, TARGET_DIR, DIFFICULTIES), (SKINS_SOURCE_DIR, SKINS_TARGET_DIR, SKINS_DIFFICULTIES)]:
 
-def pixelize_image(input_path, output_path, pixel_size):
-    img = Image.open(input_path)
-    # Réduire l'image
-    small = img.resize(
-        (max(1, img.width // pixel_size), max(1, img.height // pixel_size)), 
-        resample=Image.NEAREST
-    )
-    # Re-agrandir pour effet pixelisé
-    result = small.resize(img.size, Image.NEAREST)
-    result.save(output_path)
-    print(f"[{pixel_size}] {output_path} créé")
+    # Crée les dossiers si inexistants
+    for level in difficulty.keys():
+        os.makedirs(os.path.join(target, level), exist_ok=True)
 
-# Parcours des images source
-for filename in os.listdir(SKINS_SOURCE_DIR):
-    if not filename.lower().endswith(".png"):
-        continue
-    input_path = os.path.join(SKINS_SOURCE_DIR, filename)
-    name, ext = os.path.splitext(filename)
-    
-    for level, px_size in SKINS_DIFFICULTIES.items():
-        output_path = os.path.join(SKINS_TARGET_DIR, level, f"{name}.png")
-        pixelize_image(input_path, output_path, px_size)
+    def pixelize_image(input_path, output_path, pixel_size):
+        img = Image.open(input_path)
+        # Réduire l'image
+        small = img.resize(
+            (max(1, img.width // pixel_size), max(1, img.height // pixel_size)), 
+            resample=Image.NEAREST
+        )
+        # Re-agrandir pour effet pixelisé
+        result = small.resize(img.size, Image.NEAREST)
+        result.save(output_path)
+        print(f"[{pixel_size}] {output_path} créé")
+
+    # Parcours des images source
+    for filename in os.listdir(source):
+        if not filename.lower().endswith(".png"):
+            continue
+        input_path = os.path.join(source, filename)
+        name, ext = os.path.splitext(filename)
+        
+        for level, px_size in difficulty.items():
+            output_path = os.path.join(target, level, f"{name}.png")
+            pixelize_image(input_path, output_path, px_size)

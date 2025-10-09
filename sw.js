@@ -1,3 +1,4 @@
+// sw.js
 self.addEventListener("install", (event) => {
   console.log("📦 Service Worker : installation...");
   event.waitUntil(
@@ -7,8 +8,8 @@ self.addEventListener("install", (event) => {
         "./index.html",
         "./app.js",
         "./manifest.webmanifest",
-        "./assets/favicon192.png",
-        "./assets/favicon512.png"
+        "./assets/favicon/favicon192.png",
+        "./assets/favicon/favicon512.png",
       ]);
     })
   );
@@ -22,21 +23,7 @@ self.addEventListener("fetch", (event) => {
   );
 });
 
-// Enregistrement du service worker
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("sw.js")
-    .then(() => console.log("✅ Service worker enregistré"))
-    .catch(err => console.error("Erreur SW :", err));
-}
-window.addEventListener("beforeinstallprompt", (e) => {
-  console.log("✅ beforeinstallprompt déclenché !");
-  e.preventDefault();
-  const installBtn = document.createElement("button");
-  installBtn.textContent = "📲 Installer l'application";
-  document.body.appendChild(installBtn);
-  installBtn.addEventListener("click", async () => {
-    e.prompt();
-    const { outcome } = await e.userChoice;
-    console.log(`Résultat installation : ${outcome}`);
-  });
+self.addEventListener("activate", (event) => {
+  console.log("⚡ Service Worker activé !");
+  event.waitUntil(self.clients.claim());
 });
