@@ -1,30 +1,30 @@
 html, body {
   margin: 0;
   padding: 0;
-  width: 100%;
-  height: 100%;
-  overflow-x: hidden;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 body {
+  flex: 1;
   font-family: 'Segoe UI', sans-serif;
   background: #1e1e2f;
   color: #fff;
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-  margin: 0;
 }
 
+
 footer {
+  margin-top: auto; /* colle en bas automatiquement */
   text-align: center;
   width: 100%;
   background-color: #111;
   color: white;
   padding: 10px 0;
   font-size: 0.9em;
-  margin-top: auto;
 }
+
+
 .options, .guess, .game-modes {
   margin: 15px 0;
 }
@@ -85,9 +85,14 @@ button:hover {
   text-align: center;
   gap: 60px;
   width: 100%;
-  height: 100vh; /* obligatoire pour occuper tout l’écran */
   background: radial-gradient(circle at center, #101820, #05060a);
   color: #fff;
+}
+
+#welcome-screen,
+.container {
+  flex: 1;
+  min-height: calc(100vh - 60px); /* laisse 60px de marge pour le footer */
   box-sizing: border-box;
 }
 
@@ -452,3 +457,98 @@ button:hover {
   margin-top: 20px;
 }
 
+/* 📱 VERSION MOBILE */
+@media (max-width: 768px) {
+  html, body {
+    overflow-y: auto;
+  }
+
+  .game-title {
+    font-size: 2rem;
+    padding: 0 10px;
+  }
+
+  #welcome-screen {
+    gap: 10px;
+  }
+
+  .modes-container {
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+  }
+
+  .mode-section {
+    width: 90%;
+    padding: 20px;
+  }
+
+  .container {
+    padding: 0px 20px;
+  }
+  
+  .card-container {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .difficulty-card {
+    padding: 15px;
+  }
+
+  .smiley {
+    width: 35px;
+    height: 35px;
+  }
+
+  .container h2 {
+    font-size: 1.8rem;
+  }
+
+  .image-container {
+    width: 90vw;
+    height: auto;
+    aspect-ratio: 9/16;
+  }
+
+  .image-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .feedback {
+    font-size: 1.4rem;
+  }
+
+  .guess {
+    width: 90%;
+  }
+
+  .guess input[type="text"] {
+    font-size: 0.9rem;
+    padding: 8px 10px;
+  }
+
+  .suggestions {
+    font-size: 0.9rem;
+    max-height: 120px;
+  }
+
+  button {
+    padding: 10px 20px;
+    font-size: 0.9rem;
+  }
+
+  .back-btn {
+    top: 10px;
+    left: 10px;
+    font-size: 0.9rem;
+    padding: 8px 14px;
+  }
+
+  footer {
+    font-size: 0.7rem;
+    padding: 8px;
+  }
+}

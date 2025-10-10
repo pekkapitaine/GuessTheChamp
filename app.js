@@ -147,18 +147,20 @@ function showScreen(screenDiv) {
     else div.style.display = "none";
   });
 }
+
+let difficulty = "";
 document.addEventListener("DOMContentLoaded", () => {
 
   // Sélectionne toutes les cartes de difficulté
   document.querySelectorAll(".difficulty-card").forEach(card => {
     card.addEventListener("click", async () => {
-      const difficulty = card.dataset.difficulty; // "easy", "medium", etc.
+      difficulty = card.dataset.difficulty; // "easy", "medium", etc.
       console.log(`🎮 Lancement du mode infini (${difficulty})`);
 
       showScreen(infiniteModeDiv);
 
       // Lance la première image avec la difficulté choisie
-      await loadRandomImage("infinite", difficulty);
+      await loadRandomImage("infinite");
     });
   });
 
@@ -289,10 +291,10 @@ setupLiveSuggestions("champ-input-challenge", "suggestions-challenge", (value) =
 let currentChampion = null;
 let currentImage = null;
 let currentSoluce = null;
-async function loadRandomImage(mode, difficultyParam = null) {
+
+async function loadRandomImage(mode) {
   if (mode === "infinite") {
     // Si on passe une difficulté depuis la carte, on l'utilise, sinon on lit le select
-    const difficulty = difficultyParam || document.getElementById("difficulty").value;
     const includeSkins = document.getElementById("include-skins").checked ? "True" : "False";
 
     try {
