@@ -64,25 +64,31 @@ let pyodide;
 let isReady = false;
 
 // Crée et affiche un loader une seule fois
-function showLoader(message = "Chargement...") {
+function showLoader(message) {
+  // Tableau de messages possibles
+  const messages = ["Salut", "Hey", "Coucou"];
+
+  // Si aucun message n’est passé, on en choisit un au hasard
+  const messageToShow = message || messages[Math.floor(Math.random() * messages.length)];
+
   let loader = document.getElementById("loader");
   if (!loader) {
     loader = document.createElement("div");
     loader.id = "loader";
     loader.innerHTML = `
       <div class="loader-spinner"></div>
-      <p id="loader-text">${message}</p>
+      <p id="loader-text">${messageToShow}</p>
     `;
     document.body.appendChild(loader);
   } else {
-    document.getElementById("loader-text").textContent = message;
+    document.getElementById("loader-text").textContent = messageToShow;
   }
 }
 
 // Supprime le loader
 function hideLoader() {
   const loader = document.getElementById("loader");
-  if (loader) loader.remove();
+  if (loader) loader.remove()
 }
 
 // Étape 1 : charger Pyodide
@@ -108,10 +114,10 @@ async function loadGameModule() {
 // Initialisation complète de l’app
 async function initializeApp() {
   try {
-    showLoader("Salut !");
+    showLoader();
     await initPyodide();
 
-    await loadGameModule(); // écrit game.py
+    await loadGameModule();
     await pyodide.runPythonAsync("import game");
 
     console.log("✅ game.py et game_data.py chargés dans Pyodide !");

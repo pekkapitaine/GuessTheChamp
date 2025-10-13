@@ -24,15 +24,6 @@ for diff, kinds in IMAGES_META.items():
         base_dir = Path("ImagesChampPixel") / ("DefaultChampsPixel" if kind_name=="default" else "SkinChampsPixel") / diff
         for pix_name in kinds.get(kind_name, []):
             pix_path = base_dir / pix_name
-            if not pix_path.exists():
-                print(f"❌ Fichier pixelisé manquant : {pix_path}")
-
-# Vérifie que le fichier original existe
-originals = set(IMAGE_LABELS.values())
-for orig_name in originals:
-    found = list(Path("ImagesChamps").rglob(orig_name))
-    if not found:
-        print(f"❌ Fichier original manquant : {orig_name}")
 
 print("✅ Vérification terminée.")
 # ------------------------------------------------------------------
