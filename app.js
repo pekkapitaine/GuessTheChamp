@@ -30,21 +30,30 @@ if ("serviceWorker" in navigator) {
 }
 
 // Gestion de l'installation PWA
+let deferredPrompt; // 🔹 variable globale pour stocker l'événement
+
 window.addEventListener("beforeinstallprompt", (e) => {
   console.log("✅ beforeinstallprompt déclenché !");
   e.preventDefault();
+  deferredPrompt = e; // on le stocke pour l’utiliser plus tard
+
   const installBtn = document.createElement("button");
   installBtn.textContent = "📲 Installer l'application";
   installBtn.classList.add("install-btn");
-  document.body.appendChild(installBtn);
+  document.getElementById("welcome-screen").appendChild(installBtn);
 
   installBtn.addEventListener("click", async () => {
-    e.prompt();
-    const { outcome } = await e.userChoice;
-    console.log(`Résultat installation : ${outcome}`);
+    console.log("🟢 Bouton d'installation cliqué");
     installBtn.remove();
+
+    deferredPrompt.prompt(); // on utilise la variable stockée
+    const { outcome } = await deferredPrompt.userChoice;
+    console.log(`Résultat installation : ${outcome}`);
+
+    deferredPrompt = null; // l'événement ne peut plus être réutilisé
   });
 });
+
 
 // ⚡ app.js (module ES)
 
@@ -78,7 +87,6 @@ function hideLoader() {
 
 // Étape 1 : charger Pyodide
 async function initPyodide() {
-  showLoader("Chargement de Pyodide...");
   pyodide = await loadPyodide();
   console.log("✅ Pyodide chargé !");
 }
@@ -100,10 +108,9 @@ async function loadGameModule() {
 // Initialisation complète de l’app
 async function initializeApp() {
   try {
-    showLoader("Initialisation du moteur Python...");
+    showLoader("Salut !");
     await initPyodide();
 
-    showLoader("Chargement du module de jeu...");
     await loadGameModule(); // écrit game.py
     await pyodide.runPythonAsync("import game");
 
