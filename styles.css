@@ -49,23 +49,25 @@ body {
 }
 
 footer {
-  margin-top: auto;
-  text-align: center;
+  position: fixed;
+  bottom: 0;
   width: 100%;
   background-color: #111;
   color: white;
   padding: 10px 0;
-  font-size: 0.9em;
+  text-align: center;
 }
+
+
 
 /* 🌟 ACCUEIL GAMING STYLE */
 #welcome-screen {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  align-items: center;  
+  justify-content: flex-start;
   text-align: center;
-  gap: 60px;
+  gap: 40px;
   width: 100%;
   background: radial-gradient(circle at center, #101820, #05060a);
   color: #fff;
@@ -131,13 +133,15 @@ footer {
 
 
 /* 🎮 TITRE */
-.game-title {
-  font-size: 3rem;
-  color: #f8d24b;
-  text-shadow: 0 0 20px #f8d24b80;
-  letter-spacing: 2px;
-  margin-bottom: 10px;
+.game-logo {
+  width: auto;             /* taille du logo (ajuste selon ton image) */
+  height: 20vh;
+  margin-top: 30px;
+  filter: drop-shadow(0 0 20px #f8d24b80); /* effet lumineux comme avant */
+  image-rendering: crisp-edges;            /* pour bien garder le pixel art */
+  image-rendering: pixelated;
 }
+
 
 /* 🧩 MODE DE JEU */
 .modes-container {
@@ -239,6 +243,12 @@ footer {
   transform: scale(1.05);
 }
 
+.back-btn img {
+  width: 16px;   /* taille fixe de l’icône */
+  height: 12px;
+  object-fit: contain;
+}
+
 /* ⚙️ CONTENEUR GLOBAL DE JEU */
 .container {
   flex: 1;
@@ -247,7 +257,7 @@ footer {
   align-items: center;
   justify-content: flex-start;
   text-align: center;
-  padding: 40px 20px;
+  padding: 0px 20px;
   background: radial-gradient(circle at center, #101820, #05060a);
 }
 
@@ -476,7 +486,8 @@ button:hover {
 
   .image-container {
     grid-area: image;
-    width: 90%;
+    height: 90%;
+    width: auto;
     max-width: 350px;
   }
 
@@ -511,6 +522,11 @@ button:hover {
     max-height: 130px;
     font-size: 0.85rem;
     overflow-y: auto;
+  }
+
+  .back-btn {
+    top: 10px;
+    left: 10px;
   }
 
   footer {

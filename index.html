@@ -4,19 +4,19 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#101820">
+  <meta name="apple-mobile-web-app-title" content="LPG">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-
-  <title>Devine le Champion</title>
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/favicon/apple-touch-icon.png">
   <link rel="stylesheet" href="styles.css">
   <link rel="icon" href="assets/favicon/favicon192.png" type="image/png">
   <link rel="manifest" href="manifest.webmanifest">
-
+  <title>LoL Pixel Guesser</title>
 </head>
 <body>
 <!-- 🌟 ACCUEIL -->
 <div class="container" id="welcome-screen">
-  <h1 class="game-title">Devine le Champion 🏆</h1>
+  <img src="./assets/interface/LPG_Title.png" alt="LoL Pixel Guesser" class="game-logo">
 
   <div class="modes-container">
     <!-- MODE INFINI -->
@@ -57,12 +57,14 @@
       <button id="mode-challenge-btn" class="challenge-btn">Jouer</button>
     </div>
   </div>
+  <footer>
+    <p>© 2025 Devine le Champion. Tous droits réservés. Pekkapitaine corp.</p>
+  </footer>
 </div>
-
 
   <!-- ♾️ MODE INFINI -->
 <div class="container" id="infinite-mode" style="display:none;">
-  <button id="back-from-infinite" class="back-btn">⬅ Retour</button>
+  <button id="back-from-infinite" class="back-btn"><img src="assets/interface/back_arrow.svg"></button>
 
   <h2>♾️ Mode Infini</h2>
 
@@ -126,9 +128,6 @@
   </div>
 
 
-  <footer>
-  <p>© 2025 Devine le Champion. Tous droits réservés. Pekkapitaine corp.</p>
-</footer>
   <!-- ⚙️ Scripts -->
   <script src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
   <script type="module" src="app.js"></script>
