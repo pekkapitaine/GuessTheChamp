@@ -161,15 +161,20 @@ function showScreen(screenDiv) {
   });
 }
 
-let difficulty = "";
+let difficulty;
+let timerInterval = null;
+let secondsElapsed = 0;
 document.addEventListener("DOMContentLoaded", () => {
 
-  // Sélectionne toutes les cartes de difficulté
+    // Sélectionne toutes les cartes de difficulté
   document.querySelectorAll(".difficulty-card").forEach(card => {
     card.addEventListener("click", async () => {
       difficulty = card.dataset.difficulty;
       console.log(`🎮 Lancement du mode infini (${difficulty})`);
+
+      
       await loadRandomImage("infinite");
+      startTimer();
       showScreen(infiniteModeDiv);
     });
   });
@@ -182,12 +187,13 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   document.getElementById("back-from-infinite").addEventListener("click", () => {
-
+  
+    stopTimer();
     showScreen(welcomeScreen);
   });
 
     document.getElementById("back-from-challenge").addEventListener("click", () => {
-
+    stopTimer();
     showScreen(welcomeScreen);
   });
   document.getElementById("skip-current-champ").addEventListener("click", () => {
@@ -241,7 +247,7 @@ function setupLiveSuggestions(inputId, suggestionsId, onValidate) {
         champInput.value = m;
         suggestions.innerHTML = "";
         suggestions.style.display = "none";
-        onValidate(m); // valide automatiquement au clic
+        onValidate(m);
       });
 
       suggestions.appendChild(div);
@@ -249,10 +255,7 @@ function setupLiveSuggestions(inputId, suggestionsId, onValidate) {
 
     // 🔹 Focus sur le premier élément par défaut
     focusedIndex = 0;
-    suggestions.querySelectorAll(".suggestion-item").forEach((item, idx) => {
-      item.classList.toggle("focused", idx === focusedIndex);
-    });
-
+    updateFocus();
     suggestions.style.display = "block";
   });
 
@@ -263,9 +266,11 @@ function setupLiveSuggestions(inputId, suggestionsId, onValidate) {
     if (e.key === "ArrowDown") {
       e.preventDefault();
       focusedIndex = (focusedIndex + 1) % items.length;
+      updateFocus();
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
       focusedIndex = (focusedIndex - 1 + items.length) % items.length;
+      updateFocus();
     } else if (e.key === "Enter") {
       e.preventDefault();
       const selectedChampion = items[focusedIndex]?.textContent;
@@ -276,13 +281,24 @@ function setupLiveSuggestions(inputId, suggestionsId, onValidate) {
         onValidate(selectedChampion);
       }
     }
-
-    // 🔹 Met à jour le focus visuel
-    items.forEach((item, idx) => {
-      item.classList.toggle("focused", idx === focusedIndex);
-    });
   });
+
+  // 🔹 Gère le focus visuel + scroll automatique
+  function updateFocus() {
+    const items = suggestions.querySelectorAll(".suggestion-item");
+    items.forEach((item, idx) => {
+      const isFocused = idx === focusedIndex;
+      item.classList.toggle("focused", isFocused);
+      if (isFocused) {
+        item.scrollIntoView({
+          behavior: "smooth",
+          block: "nearest"
+        });
+      }
+    });
+  }
 }
+
 
 
 
@@ -437,4 +453,21 @@ includeSkinsCheckbox.addEventListener('change', () => {
   localStorage.setItem('includeSkins', includeSkinsCheckbox.checked);
 });
 
+// Gestion du Timer
+function startTimer() {
+  const timerElement = document.getElementById("timer");
+  secondsElapsed = 0;
+  clearInterval(timerInterval);
 
+  timerInterval = setInterval(() => {
+    secondsElapsed++;
+    const minutes = Math.floor(secondsElapsed / 60);
+    const seconds = secondsElapsed % 60;
+    timerElement.textContent = `⏱️ ${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+  }, 1000);
+}
+
+function stopTimer() {
+  clearInterval(timerInterval);
+  document.getElementById("timer").textContent = "⏱️ 00:00";
+}

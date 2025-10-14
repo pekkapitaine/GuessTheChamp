@@ -386,21 +386,57 @@ footer {
   width: 100%;
   max-height: 150px;
   overflow-y: auto;
-  background: rgba(30,30,40,0.95);
+  background: rgba(30,30,40,1 );
   border-radius: 10px;
   border: 1px solid #f8d24b33;
   box-shadow: 0 0 10px #f8d24b22;
   z-index: 100;
   display: none;
+  scrollbar-width: thin;
+  scrollbar-color: #f8d24b #1a1d22
+}
+
+/* Barre de scroll custom (Chrome, Edge, etc.) */
+.suggestions::-webkit-scrollbar {
+  width: 8px;
+}
+
+.suggestions::-webkit-scrollbar-track {
+  background: #1a1d22;
+  border-radius: 8px;
+}
+
+.suggestions::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #f8d24b, #cea923);
+  border-radius: 8px;
+}
+
+.suggestions::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #b19c50, #f8d24b);
 }
 
 .suggestions div {
-  padding: 3px;
+  padding: 8px 10px;
+  margin: 2px 0;
   cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.15s ease;
+  color: #e5e7eb; /* gris clair lisible */
+  border: 1px solid transparent;
 }
 
+/* Survol (hover) */
 .suggestions div:hover {
-  background: #555;
+  background: #463806;
+  border-color: #f8d24b;
+}
+
+/* Élément sélectionné (focus clavier) */
+.suggestions div.focused {
+  background: #645008;
+  border-color: #f8d24b;
+  color: #ffffff;
+  box-shadow: 0 0 8px rgba(185, 169, 26, 0.6);
 }
 
 /* 🧱 BOUTONS */
@@ -531,5 +567,6 @@ button:hover {
 
   footer {
     font-size: 0.7rem;
+    position: relative;
   }
 }
