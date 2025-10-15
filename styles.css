@@ -6,6 +6,11 @@ html, body {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 /* Loader global */
@@ -266,7 +271,7 @@ footer {
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  gap: 48px;
+  gap: 20%;
   flex-wrap: nowrap;
   width: 100%;
   max-width: 1200px;
