@@ -26,6 +26,16 @@ if ("serviceWorker" in navigator) {
     navigator.serviceWorker.register("./sw.js")
   });
 }
+// --- ÉVÉNEMENT INSTALLATION ---
+window.addEventListener("beforeinstallprompt", (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+
+  // n'affiche la popin que si l'app est prête
+  if (isReady) {
+    showInstallModalIfNeeded();
+  }
+});
 
 // --- VARIABLES ---
 let deferredPrompt;
@@ -54,31 +64,61 @@ btnIOS.addEventListener("click", () => {
   contentAndroid.classList.add("hidden");
 });
 
-// --- ÉVÉNEMENT INSTALLATION ---
-window.addEventListener("beforeinstallprompt", (e) => {
-  e.preventDefault();
-  deferredPrompt = e;
+const installModal = document.getElementById('install-modal');
+const installBtn = document.getElementById('install-btn');
 
-  // n'affiche la popin que si l'app est prête
-  if (isReady) {
-    showInstallModal();
-  }
-});
-
-// --- FONCTION D'AFFICHAGE DE LA POPIN ---
-function showInstallModal() {
-  console.log("j'affiche la popin")
-  modal.classList.remove("hidden");
+// --- SERVICE WORKER (toujours enregistré si supporté) ---
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js')
+      .then(() => console.log('SW registered'))
+      .catch(err => console.error('SW failed', err));
+  });
 }
 
-// --- INSTALLATION SUR ANDROID ---
-document.getElementById("install-btn").addEventListener("click", async () => {
-  if (!deferredPrompt) return;
+// --- FONCTION : vérifier si l'app est déjà installée ---
+function isAppInstalled() {
+  return window.matchMedia('(display-mode: standalone)').matches
+      || window.navigator.standalone === true; // iOS Safari
+}
 
-  deferredPrompt.prompt();
-  deferredPrompt = null;
-  modal.classList.add("hidden");
+// --- FONCTION : afficher la popin si besoin ---
+function showInstallModalIfNeeded() {
+  if (!isAppInstalled() && isReady) { // isReady = ton flag pour que la popin soit prête
+    installModal.classList.remove('hidden');
+  }
+}
+
+// --- ANDROID / CHROME : événement beforeinstallprompt ---
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();      // empêche l'affichage par défaut
+  deferredPrompt = e;      // stocke l'événement pour plus tard
+  showInstallModalIfNeeded();
 });
+
+// --- BOUTON INSTALLATION ---
+if (installBtn) {
+  installBtn.addEventListener('click', async () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();   // lance l'installation PWA
+      const choice = await deferredPrompt.userChoice;
+      if (choice.outcome === 'accepted') {
+        console.log('App installée !');
+      }
+      deferredPrompt = null;
+      installModal.classList.add('hidden'); // fermer la popin après installation
+    } else {
+      alert("Sur iOS, utilisez le bouton 'Partager' puis 'Sur l'écran d'accueil'");
+    }
+  });
+}
+
+// --- IOS / AUTRES NAVIGATEURS ---
+window.addEventListener('load', () => {
+  showInstallModalIfNeeded(); // popin pour iOS ou navigateurs sans beforeinstallprompt
+});
+
+
 // -----------------------------
 // 🔹 Initialisation Pyodide
 // -----------------------------
@@ -141,7 +181,7 @@ async function initializeApp() {
     isReady = true;
 
     if (deferredPrompt) {
-      showInstallModal();
+      showInstallModalIfNeeded();
     }
   } catch (error) {
     console.error("❌ Erreur lors de l'initialisation :", error);
