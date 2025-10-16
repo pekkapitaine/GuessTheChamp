@@ -7,10 +7,20 @@ html, body {
   flex-direction: column;
   overflow: hidden;
 
+  font-family: "DynaPuff", system-ui !important;
+  font-weight: 400; /* ou 500, 600, 700 */
+  font-style:normal;
   -moz-user-select: none;
   -webkit-user-select: none;
   -ms-user-select: none;
   user-select: none;
+  font-size: clamp(12px, 4vw, 20px);
+  scrollbar-width: thin;
+  scrollbar-color: #f8d24b #1a1d22
+}
+
+a {
+  color: #ffd85c;
 }
 
 /* Loader global */
@@ -397,8 +407,6 @@ footer {
   box-shadow: 0 0 10px #f8d24b22;
   z-index: 100;
   display: none;
-  scrollbar-width: thin;
-  scrollbar-color: #f8d24b #1a1d22
 }
 
 /* Barre de scroll custom (Chrome, Edge, etc.) */
@@ -460,6 +468,117 @@ button:hover {
   background: #ffd85c;
   transform: scale(1.05);
 }
+
+  /* --- MODAL --- */
+  .install-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  .install-modal.hidden {
+    display: none;
+  }
+  .install-content {
+    display: flex; 
+    flex-direction: column;
+    background: #fff;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 600px;
+    padding: 0;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    overflow: hidden;
+    animation: fadeIn 0.2s ease-in-out;
+    height: 60vh;
+  }
+
+.install-header {
+  display: flex;
+  justify-content: flex-start; 
+  align-items: center;
+  gap: 5%; 
+  background: #1e1e2f;
+  color: white;
+  padding: 10px;
+}
+
+
+  .install-header button {
+    flex: 1;
+    background: none;
+    border: none;
+    color: white;
+    font-weight: bold;
+    padding: 8px;
+    cursor: pointer;
+  }
+
+  .install-header button.active {
+    background: rgba(255,255,255,0.2);
+    border-radius: 6px;
+  }
+  .install-header button:hover {
+    background: rgba(255,255,255,0.1);
+    border-radius: 6px;
+  }
+  
+  .install-header #close-modal {
+    cursor: pointer;
+    font-size: 18px;
+  }
+  .install-body {
+    flex: 1 1 auto; /* prend le reste de l’espace */
+    padding: 16px;
+    overflow-y: auto; /* seul le body scroll */
+    color: #000;
+  }
+  .install-btn {
+    background: #1e1e2f;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+
+  .active {
+    display: block;
+  }
+  .install-section{
+    display: inline;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .install-section.hidden {
+    display: none;
+  }
+
+  .install-section img {
+    width: 80%;
+    border-radius: 8px;
+  }
+
+  .install-body ol,
+  .install-body ul {
+    padding-left: 1.5em;   /* réduit l’indentation par défaut */
+    margin: 0 0 1em 0;     /* supprime marge excessive, ajoute un petit spacing vertical */
+  }
+
+  .install-body li {
+    margin-bottom: 0.8em;  /* espace entre les items */
+  }
+  
+  @keyframes fadeIn {
+    from {opacity: 0; transform: scale(0.95);}
+    to {opacity: 1; transform: scale(1);}
+  }
 
 /* 📱 MOBILE */
 @media (max-width: 768px) {

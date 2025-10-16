@@ -24,39 +24,61 @@ async function extractFilenames(response) {
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
     navigator.serviceWorker.register("./sw.js")
-      .then(reg => console.log("✅ Service Worker enregistré :", reg.scope))
-      .catch(err => console.error("Erreur SW :", err));
   });
 }
 
-// Gestion de l'installation PWA
-let deferredPrompt; // 🔹 variable globale pour stocker l'événement
+// --- VARIABLES ---
+let deferredPrompt;
+const modal = document.getElementById("install-modal");
+const btnAndroid = document.getElementById("tab-android");
+const btnIOS = document.getElementById("tab-ios");
+const contentAndroid = document.getElementById("content-android");
+const contentIOS = document.getElementById("content-ios");
+const closeModal = document.getElementById("close-modal");
+ 
+// --- FERMETURE POPIN ---
+closeModal.addEventListener("click", () => modal.classList.add("hidden"));
 
-window.addEventListener("beforeinstallprompt", (e) => {
-  console.log("✅ beforeinstallprompt déclenché !");
-  e.preventDefault();
-  deferredPrompt = e; // on le stocke pour l’utiliser plus tard
-
-  const installBtn = document.createElement("button");
-  installBtn.textContent = "📲 Installer l'application";
-  installBtn.classList.add("install-btn");
-  document.getElementById("welcome-screen").appendChild(installBtn);
-
-  installBtn.addEventListener("click", async () => {
-    console.log("🟢 Bouton d'installation cliqué");
-    installBtn.remove();
-
-    deferredPrompt.prompt(); // on utilise la variable stockée
-    const { outcome } = await deferredPrompt.userChoice;
-    console.log(`Résultat installation : ${outcome}`);
-
-    deferredPrompt = null; // l'événement ne peut plus être réutilisé
-  });
+// --- SWITCH ONGLET ---
+btnAndroid.addEventListener("click", () => {
+  btnAndroid.classList.add("active");
+  btnIOS.classList.remove("active");
+  contentAndroid.classList.remove("hidden");
+  contentIOS.classList.add("hidden");
 });
 
+btnIOS.addEventListener("click", () => {
+  btnIOS.classList.add("active");
+  btnAndroid.classList.remove("active");
+  contentIOS.classList.remove("hidden");
+  contentAndroid.classList.add("hidden");
+});
 
-// ⚡ app.js (module ES)
+// --- ÉVÉNEMENT INSTALLATION ---
+window.addEventListener("beforeinstallprompt", (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
 
+  // n'affiche la popin que si l'app est prête
+  if (isReady) {
+    showInstallModal();
+  }
+});
+
+// --- FONCTION D'AFFICHAGE DE LA POPIN ---
+function showInstallModal() {
+  console.log("j'affiche la popin")
+  modal.classList.remove("hidden");
+}
+
+// --- INSTALLATION SUR ANDROID ---
+document.getElementById("install-btn").addEventListener("click", async () => {
+  if (!deferredPrompt) return;
+
+  deferredPrompt.prompt();
+  deferredPrompt = null;
+  modal.classList.add("hidden");
+});
 // -----------------------------
 // 🔹 Initialisation Pyodide
 // -----------------------------
@@ -91,11 +113,6 @@ function hideLoader() {
   if (loader) loader.remove()
 }
 
-// Étape 1 : charger Pyodide
-async function initPyodide() {
-  pyodide = await loadPyodide();
-  console.log("✅ Pyodide chargé !");
-}
 
 // Étape 2 : charger ton module Python
 async function loadGameModule() {
@@ -106,31 +123,31 @@ async function loadGameModule() {
   const responseData = await fetch("game_data.py");
   const codeData = await responseData.text();
   pyodide.FS.writeFile("game_data.py", codeData);
-
-  console.log("✅ game.py et game_data.py écrits dans Pyodide");
 }
-
+let championsList = [];
 
 // Initialisation complète de l’app
 async function initializeApp() {
   try {
     showLoader();
-    await initPyodide();
-
+    pyodide = await loadPyodide()
     await loadGameModule();
     await pyodide.runPythonAsync("import game");
 
-    console.log("✅ game.py et game_data.py chargés dans Pyodide !");
+    const response = await fetch("champions_list.json");
+    championsList = await response.json();
 
-    loadChampionsList();
     hideLoader();
     isReady = true;
+
+    if (deferredPrompt) {
+      showInstallModal();
+    }
   } catch (error) {
     console.error("❌ Erreur lors de l'initialisation :", error);
     showLoader("Erreur de chargement. Recharge la page.");
   }
 }
-
 
 // Bloquer les boutons tant que Pyodide n’est pas prêt
 document.querySelectorAll("button").forEach(btn => {
@@ -139,11 +156,8 @@ document.querySelectorAll("button").forEach(btn => {
       alert("Patiente un peu, le moteur Python se charge !");
       return;
     }
-    console.log(`🟢 Bouton ${btn.id} cliqué après initialisation`);
   });
 });
-
-// Lancer le chargement au démarrage
 initializeApp();
 
 
@@ -170,7 +184,6 @@ document.addEventListener("DOMContentLoaded", () => {
   document.querySelectorAll(".difficulty-card").forEach(card => {
     card.addEventListener("click", async () => {
       difficulty = card.dataset.difficulty;
-      console.log(`🎮 Lancement du mode infini (${difficulty})`);
 
       
       await loadRandomImage("infinite");
@@ -204,13 +217,7 @@ document.addEventListener("DOMContentLoaded", () => {
 // -----------------------------
 // 🔤 SUGGESTIONS LIVE
 // -----------------------------
-let championsList = [];
 
-async function loadChampionsList() {
-  const response = await fetch("champions_list.json");
-  championsList = await response.json();
-  console.log("✅ Liste des champions chargée :", championsList.length);
-}
 
 function setupLiveSuggestions(inputId, suggestionsId, onValidate) {
   const champInput = document.getElementById(inputId);
@@ -338,7 +345,7 @@ async function loadRandomImage(mode) {
       document.getElementById("champ-image").src = currentImage;
 
     } catch (err) {
-      console.error("Erreur Pyodide :", err);
+      console.error("Erreur :", err);
     }
   } else {
     // Placeholder pour le mode challenge
