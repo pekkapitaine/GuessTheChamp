@@ -21,31 +21,32 @@ async function extractFilenames(response) {
 // -----------------------------
 // 🔧 SERVICE WORKER & PWA
 // -----------------------------
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker.register("./sw.js")
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js')
+      .then(() => console.log('SW registered'))
+      .catch(err => console.error('SW failed', err));
   });
 }
 // --- ÉVÉNEMENT INSTALLATION ---
 window.addEventListener("beforeinstallprompt", (e) => {
   e.preventDefault();
   deferredPrompt = e;
-
-  // n'affiche la popin que si l'app est prête
-  if (isReady) {
-    showInstallModalIfNeeded();
-  }
+  showInstallModalIfNeeded();
+  
 });
 
 // --- VARIABLES ---
 let deferredPrompt;
+const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
 const modal = document.getElementById("install-modal");
 const btnAndroid = document.getElementById("tab-android");
 const btnIOS = document.getElementById("tab-ios");
 const contentAndroid = document.getElementById("content-android");
 const contentIOS = document.getElementById("content-ios");
 const closeModal = document.getElementById("close-modal");
- 
+const installBtn = document.getElementById('install-btn');
+
 // --- FERMETURE POPIN ---
 closeModal.addEventListener("click", () => modal.classList.add("hidden"));
 
@@ -64,17 +65,10 @@ btnIOS.addEventListener("click", () => {
   contentAndroid.classList.add("hidden");
 });
 
-const installModal = document.getElementById('install-modal');
-const installBtn = document.getElementById('install-btn');
+
 
 // --- SERVICE WORKER (toujours enregistré si supporté) ---
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js')
-      .then(() => console.log('SW registered'))
-      .catch(err => console.error('SW failed', err));
-  });
-}
+
 
 // --- FONCTION : vérifier si l'app est déjà installée ---
 function isAppInstalled() {
@@ -84,17 +78,29 @@ function isAppInstalled() {
 
 // --- FONCTION : afficher la popin si besoin ---
 function showInstallModalIfNeeded() {
-  if (!isAppInstalled() && isReady) { // isReady = ton flag pour que la popin soit prête
-    installModal.classList.remove('hidden');
+  // Si l'app est déjà installée, ne rien faire
+  if (isAppInstalled()) return;
+
+  // --- Android / navigateur supportant beforeinstallprompt ---
+  if (deferredPrompt && isReady) {
+    modal.classList.remove('hidden');
+    btnAndroid.classList.add("active");
+    btnIOS.classList.remove("active");
+    contentAndroid.classList.remove("hidden");
+    contentIOS.classList.add("hidden");
+    return;
+  }
+
+  // --- iOS (Safari) ---
+  if (isIOS) {
+    modal.classList.remove('hidden');
+    btnIOS.classList.add("active");
+    btnAndroid.classList.remove("active");
+    contentIOS.classList.remove("hidden");
+    contentAndroid.classList.add("hidden");
+    return;
   }
 }
-
-// --- ANDROID / CHROME : événement beforeinstallprompt ---
-window.addEventListener('beforeinstallprompt', (e) => {
-  e.preventDefault();      // empêche l'affichage par défaut
-  deferredPrompt = e;      // stocke l'événement pour plus tard
-  showInstallModalIfNeeded();
-});
 
 // --- BOUTON INSTALLATION ---
 if (installBtn) {
@@ -106,18 +112,12 @@ if (installBtn) {
         console.log('App installée !');
       }
       deferredPrompt = null;
-      installModal.classList.add('hidden'); // fermer la popin après installation
+      modal.classList.add('hidden'); // fermer la popin après installation
     } else {
       alert("Sur iOS, utilisez le bouton 'Partager' puis 'Sur l'écran d'accueil'");
     }
   });
 }
-
-// --- IOS / AUTRES NAVIGATEURS ---
-window.addEventListener('load', () => {
-  showInstallModalIfNeeded(); // popin pour iOS ou navigateurs sans beforeinstallprompt
-});
-
 
 // -----------------------------
 // 🔹 Initialisation Pyodide
@@ -169,20 +169,19 @@ let championsList = [];
 // Initialisation complète de l’app
 async function initializeApp() {
   try {
-    showLoader();
-    pyodide = await loadPyodide()
+    showLoader();  // 1️⃣ affiche le loader
+    pyodide = await loadPyodide();
     await loadGameModule();
     await pyodide.runPythonAsync("import game");
 
     const response = await fetch("champions_list.json");
     championsList = await response.json();
 
-    hideLoader();
+    hideLoader();  // 2️⃣ Pyodide prêt, on cache le loader
     isReady = true;
 
-    if (deferredPrompt) {
-      showInstallModalIfNeeded();
-    }
+    // 3️⃣ afficher le modal d'installation après le loader
+    showInstallModalIfNeeded();
   } catch (error) {
     console.error("❌ Erreur lors de l'initialisation :", error);
     showLoader("Erreur de chargement. Recharge la page.");
@@ -220,28 +219,42 @@ let timerInterval = null;
 let secondsElapsed = 0;
 document.addEventListener("DOMContentLoaded", () => {
 
-    // Sélectionne toutes les cartes de difficulté
   document.querySelectorAll(".difficulty-card").forEach(card => {
     card.addEventListener("click", async () => {
       difficulty = card.dataset.difficulty;
 
-      
       await loadRandomImage("infinite");
       startTimer();
       showScreen(infiniteModeDiv);
     });
   });
 
-
   document.getElementById("mode-challenge-btn").addEventListener("click", () => {
-
     showScreen(challengeModeDiv);
     loadRandomImage("challenge");
   });
 
   document.getElementById("back-from-infinite").addEventListener("click", () => {
-  
-    stopTimer();
+    stopTimer();async function initializeApp() {
+  try {
+    showLoader();  // 1️⃣ affiche le loader
+    pyodide = await loadPyodide();
+    await loadGameModule();
+    await pyodide.runPythonAsync("import game");
+
+    const response = await fetch("champions_list.json");
+    championsList = await response.json();
+
+    hideLoader();  // 2️⃣ Pyodide prêt, on cache le loader
+    isReady = true;
+
+    // 3️⃣ afficher le modal d'installation après le loader
+    showInstallModalIfNeeded();
+  } catch (error) {
+    console.error("❌ Erreur lors de l'initialisation :", error);
+    showLoader("Erreur de chargement. Recharge la page.");
+  }
+}
     showScreen(welcomeScreen);
   });
 
@@ -249,6 +262,7 @@ document.addEventListener("DOMContentLoaded", () => {
     stopTimer();
     showScreen(welcomeScreen);
   });
+
   document.getElementById("skip-current-champ").addEventListener("click", () => {
     loadRandomImage("infinite");
   });
