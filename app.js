@@ -16,8 +16,6 @@ async function extractFilenames(response) {
   );
 }
 
-
-
 // -----------------------------
 // 🔧 SERVICE WORKER & PWA
 // -----------------------------
@@ -48,32 +46,55 @@ const closeModal = document.getElementById("close-modal");
 const installBtn = document.getElementById('install-btn');
 
 // --- FERMETURE POPIN ---
-closeModal.addEventListener("click", () => modal.classList.add("hidden"));
+closeModal.addEventListener("click", () => closeInstallModal());
+
+function closeInstallModal() {
+  // Lance l’animation fade-out
+  modal.classList.add("fade-out");
+
+  // Attends la fin de l’animation avant de cacher complètement
+  const duration = 200; // même durée que dans @keyframes
+  setTimeout(() => {
+    modal.classList.add("hidden");
+    modal.classList.remove("fade-out"); // reset
+  }, duration);
+}
 
 // --- SWITCH ONGLET ---
 btnAndroid.addEventListener("click", () => {
-  btnAndroid.classList.add("active");
-  btnIOS.classList.remove("active");
-  contentAndroid.classList.remove("hidden");
-  contentIOS.classList.add("hidden");
+  showAndroidModal()
 });
 
 btnIOS.addEventListener("click", () => {
-  btnIOS.classList.add("active");
-  btnAndroid.classList.remove("active");
-  contentIOS.classList.remove("hidden");
-  contentAndroid.classList.add("hidden");
+  showIOSModal()
 });
 
-
-
-// --- SERVICE WORKER (toujours enregistré si supporté) ---
-
+window.addEventListener("click", (event) => {
+  if (!modal.classList.contains("hidden") && event.target === modal) {
+    closeInstallModal()
+  }
+});
 
 // --- FONCTION : vérifier si l'app est déjà installée ---
 function isAppInstalled() {
   return window.matchMedia('(display-mode: standalone)').matches
       || window.navigator.standalone === true; // iOS Safari
+}
+
+function showAndroidModal() {
+    modal.classList.remove('hidden');
+    btnAndroid.classList.add("active");
+    btnIOS.classList.remove("active");
+    contentAndroid.classList.remove("hidden");
+    contentIOS.classList.add("hidden");
+}
+
+function showIOSModal() {
+    modal.classList.remove('hidden');
+    btnIOS.classList.add("active");
+    btnAndroid.classList.remove("active");
+    contentIOS.classList.remove("hidden");
+    contentAndroid.classList.add("hidden");
 }
 
 // --- FONCTION : afficher la popin si besoin ---
@@ -83,21 +104,13 @@ function showInstallModalIfNeeded() {
 
   // --- Android / navigateur supportant beforeinstallprompt ---
   if (deferredPrompt && isReady) {
-    modal.classList.remove('hidden');
-    btnAndroid.classList.add("active");
-    btnIOS.classList.remove("active");
-    contentAndroid.classList.remove("hidden");
-    contentIOS.classList.add("hidden");
+    showAndroidModal()
     return;
   }
 
   // --- iOS (Safari) ---
   if (isIOS) {
-    modal.classList.remove('hidden');
-    btnIOS.classList.add("active");
-    btnAndroid.classList.remove("active");
-    contentIOS.classList.remove("hidden");
-    contentAndroid.classList.add("hidden");
+    showIOSModal()
     return;
   }
 }
@@ -114,7 +127,7 @@ if (installBtn) {
       deferredPrompt = null;
       modal.classList.add('hidden'); // fermer la popin après installation
     } else {
-      alert("Sur iOS, utilisez le bouton 'Partager' puis 'Sur l'écran d'accueil'");
+      alert("Non non pas comme ça, suis plutôt les étapes de l'onglet 'IOS Apple'");
     }
   });
 }
@@ -128,7 +141,7 @@ let isReady = false;
 // Crée et affiche un loader une seule fois
 function showLoader(message) {
   // Tableau de messages possibles
-  const messages = ["Salut", "Hey", "Coucou"];
+  const messages = ["Mise en place de singes dans ta prochaine game...","Bannisement du yasuo en 0/10/0...","-24pl et +15pl, et oui c'est la vie.","DEMACIAAAAA !","Nerfing de Mordekaiser...","Road to challenger...","Exclusion du jeu des joueurs range top...","Nunu support meilleur pick...","Petite pause après une série de défaite...","Leagues of Draven !","Ici ça mange du pixel au p'ti dej...","Ahhh, voilà mon puant préféré...","LoL > Famille & amis","LoL - douche + série de défaites = fou du bus"];
 
   // Si aucun message n’est passé, on en choisit un au hasard
   const messageToShow = message || messages[Math.floor(Math.random() * messages.length)];
@@ -154,25 +167,43 @@ function hideLoader() {
 }
 
 
-// Étape 2 : charger ton module Python
-async function loadGameModule() {
-  const responseGame = await fetch("game.py");
-  const codeGame = await responseGame.text();
-  pyodide.FS.writeFile("game.py", codeGame);
 
-  const responseData = await fetch("game_data.py");
-  const codeData = await responseData.text();
-  pyodide.FS.writeFile("game_data.py", codeData);
+// Initialise Pyodide et charge ton module Python
+async function initializePyodide() {
+  try {
+    console.log("♾️ Chargement de Pyodide...");
+    pyodide = await loadPyodide({
+      indexURL: "https://cdn.jsdelivr.net/pyodide/v0.23.4/full/"
+    });
+
+    // Charger tes scripts Python
+    const responseGame = await fetch("game.py");
+    const codeGame = await responseGame.text();
+    pyodide.FS.writeFile("game.py", codeGame);
+
+    const responseData = await fetch("game_data.py");
+    const codeData = await responseData.text();
+    pyodide.FS.writeFile("game_data.py", codeData);
+
+    // Importer ton module
+    await pyodide.runPythonAsync("import game");
+
+    isReady = true;
+    console.log("♾️ Pyodide prêt !");
+  } catch (err) {
+    console.error("❌ Erreur lors de l'initialisation de Pyodide :", err);
+  }
 }
+
+window.pyodideReadyPromise = initializePyodide();
+window.pyodide = pyodide;
 let championsList = [];
 
 // Initialisation complète de l’app
 async function initializeApp() {
   try {
     showLoader();  // 1️⃣ affiche le loader
-    pyodide = await loadPyodide();
-    await loadGameModule();
-    await pyodide.runPythonAsync("import game");
+    pyodide = await initializePyodide();
 
     const response = await fetch("champions_list.json");
     championsList = await response.json();
@@ -201,70 +232,28 @@ initializeApp();
 
 
 // -----------------------------
-// 🎬 ÉCRANS / NAVIGATION
+// 🎮 NAVIGATION
 // -----------------------------
-const welcomeScreen = document.getElementById("welcome-screen");
-const infiniteModeDiv = document.getElementById("infinite-mode");
-const challengeModeDiv = document.getElementById("challenge-mode");
-
-function showScreen(screenDiv) {
-  [welcomeScreen, infiniteModeDiv, challengeModeDiv].forEach(div => {
-    if(div === screenDiv) div.style.display = "flex";
-    else div.style.display = "none";
-  });
-}
-
-let difficulty;
-let timerInterval = null;
-let secondsElapsed = 0;
+// index.js
 document.addEventListener("DOMContentLoaded", () => {
+  const cards = document.querySelectorAll(".difficulty-card");
+  const includeSkinsCheckbox = document.getElementById('include-skins');
 
-  document.querySelectorAll(".difficulty-card").forEach(card => {
-    card.addEventListener("click", async () => {
-      difficulty = card.dataset.difficulty;
+  // Charger la préférence
+  const savedPreference = localStorage.getItem('includeSkins');
+  if (savedPreference !== null) includeSkinsCheckbox.checked = savedPreference === 'true';
 
-      await loadRandomImage("infinite");
-      startTimer();
-      showScreen(infiniteModeDiv);
+  includeSkinsCheckbox.addEventListener('change', () => {
+    localStorage.setItem('includeSkins', includeSkinsCheckbox.checked);
+  });
+
+  cards.forEach(card => {
+    card.addEventListener("click", () => {
+      const difficulty = card.dataset.difficulty;
+      const includeSkin = includeSkinsCheckbox.checked ? "True" : "False";
+      console.log("👉 Clic détecté :", difficulty, includeSkin); // S’affiche avant navigation
+      window.location.href = `mode_infini?difficulty=${difficulty}&includeSkin=${includeSkin}`;
     });
-  });
-
-  document.getElementById("mode-challenge-btn").addEventListener("click", () => {
-    showScreen(challengeModeDiv);
-    loadRandomImage("challenge");
-  });
-
-  document.getElementById("back-from-infinite").addEventListener("click", () => {
-    stopTimer();async function initializeApp() {
-  try {
-    showLoader();  // 1️⃣ affiche le loader
-    pyodide = await loadPyodide();
-    await loadGameModule();
-    await pyodide.runPythonAsync("import game");
-
-    const response = await fetch("champions_list.json");
-    championsList = await response.json();
-
-    hideLoader();  // 2️⃣ Pyodide prêt, on cache le loader
-    isReady = true;
-
-    // 3️⃣ afficher le modal d'installation après le loader
-    showInstallModalIfNeeded();
-  } catch (error) {
-    console.error("❌ Erreur lors de l'initialisation :", error);
-    showLoader("Erreur de chargement. Recharge la page.");
-  }
-}
-    showScreen(welcomeScreen);
-  });
-
-    document.getElementById("back-from-challenge").addEventListener("click", () => {
-    stopTimer();
-    showScreen(welcomeScreen);
-  });
-
-  document.getElementById("skip-current-champ").addEventListener("click", () => {
-    loadRandomImage("infinite");
   });
 });
 
@@ -360,53 +349,9 @@ function setupLiveSuggestions(inputId, suggestionsId, onValidate) {
   }
 }
 
-
-
-
-
-setupLiveSuggestions("champ-input", "suggestions", (value) => {
-  checkChampionGuess(value, "infinite");
-});
-
-setupLiveSuggestions("champ-input-challenge", "suggestions-challenge", (value) => {
-  checkChampionGuess(value, "challenge");
-});
-
-// -----------------------------
-// 🧠 LOGIQUE MODE INFINI
-// -----------------------------
-let currentChampion = null;
-let currentImage = null;
-let currentSoluce = null;
-
-async function loadRandomImage(mode) {
-  if (mode === "infinite") {
-    // Si on passe une difficulté depuis la carte, on l'utilise, sinon on lit le select
-    const includeSkins = document.getElementById("include-skins").checked ? "True" : "False";
-
-    try {
-      const result = await pyodide.runPythonAsync(`
-        from game import get_random_champion
-        get_random_champion("${difficulty}", ${includeSkins})
-        `);
-      const data = JSON.parse(result);
-
-      currentChampion = data.champion;
-      currentImage = data.image;
-      currentSoluce = data.image_soluce;
-      console.log("Données reçues de Python, champion :", currentChampion, "image :", currentImage, "soluce :", currentSoluce);
-
-      document.getElementById("champ-image").src = currentImage;
-
-    } catch (err) {
-      console.error("Erreur :", err);
-    }
-  } else {
-    // Placeholder pour le mode challenge
-    document.getElementById("champ-image-challenge").src = "/ImagesChampPixel/DefaultChampsPixel/easy/Yasuo-default.png";
-  }
-}
-
+//setupLiveSuggestions("champ-input-challenge", "suggestions-challenge", (value) => {
+//  checkChampionGuess(value, "challenge");
+//});
 
 
 // -----------------------------

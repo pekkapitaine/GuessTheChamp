@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Mode Infini - LoL Pixel Guesser</title>
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="mode_infini.js"></script>
+</head>
+<body>
+  <div id="infinite-mode">
+    <button id="back-from-infinite" class="back-btn">
+      <img src="assets/interface/back_arrow.svg">
+    </button>
+
+    <h2>♾️ Mode Infini</h2>
+
+    <div class="game-area">
+      <div class="side-panel left"><div id="timer" class="timer">⏱️ 00:00</div></div>
+
+      <div class="image-container">
+        <img id="champ-image" src="" alt="Champion Pixelisé">
+        <div id="result" class="feedback"></div>
+      </div>
+
+      <div class="side-panel right">
+        <div class="history">
+          <h3>Historique</h3>
+          <ul id="history-list"></ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="guess">
+      <input type="text" id="champ-input" placeholder="Tape le nom du champion...">
+      <div id="suggestions" class="suggestions"></div>
+    </div>
+
+    <button id="skip-current-champ">Passer</button>
+  </div>
+</body>
+</html>

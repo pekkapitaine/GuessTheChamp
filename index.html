@@ -101,8 +101,10 @@
 
 
 
-  <!-- ⚡ MODE DÉFI -->
+  
   <div class="container" id="challenge-mode" style="display:none;">
+    EN COURS DE DEVELOPPEMENT :)
+    <!-- ⚡ MODE DÉFI 
     <button id="back-from-challenge" class="back-btn">⬅ Retour</button>
     <h2>Mode Défi</h2>
     <p>10 champions à deviner en moins de 30s !</p>
@@ -129,9 +131,9 @@
     </div>
 
     <div id="feedback-challenge" class="feedback"></div>
-  </div>
-
-
+  
+-->
+</div>
   
 <!-- ✅ POPIN INSTALLATION -->
 <div id="install-modal" class="install-modal hidden">
@@ -155,10 +157,10 @@
         Installation en 4 étapes, en moins de 30s. <br> <u><b>IMPORTANT</b></u>: L'installation ne peut se faire que dans Safari. 
         <br><a href="https://pekkapitaine.github.io/GuessTheChamp/">Ouvre moi dans Safari :)</a><br><br>
         <ol>
-          <li>Appuie sur les 3 points en bas à droite <img src="assets/ios_steps/step1.png" alt="Etape 1"></li>
-          <li>Appuie sur Partager<img src="assets/ios_steps/step2.png" alt="Etape 2"></li>
-          <li>choisi 'Sur l'écran d'accueil'<img src="assets/ios_steps/step3.png" alt="Etape 3"></li>
-          <li>Enfin valide bien 'Ouvrir comme app web' puis 'Ajouter'<img src="assets/ios_steps/step4.png" alt="Etape 4"></li>
+          <li>Appuie sur les 3 points en bas à droite <br><img src="assets/ios_steps/step1.png" alt="Etape 1"></li>
+          <li>Appuie sur Partager<br><img src="assets/ios_steps/step2.png" alt="Etape 2"></li>
+          <li>choisi 'Sur l'écran d'accueil'<br><img src="assets/ios_steps/step3.png" alt="Etape 3"></li>
+          <li>Enfin valide bien 'Ouvrir comme app web' puis 'Ajouter'<br><img src="assets/ios_steps/step4.png" alt="Etape 4"></li>
         </ol>
         Et voila !
       </div>
@@ -167,6 +169,16 @@
 </div>
   <!-- ⚙️ Scripts -->
   <script src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
+  <script>
+  // Préchargement global de Pyodide au démarrage de l'app
+  window.pyodideReadyPromise = (async () => {
+    const pyodide = await loadPyodide();
+    console.log("✅ Pyodide préchargé sur index.html");
+    await pyodide.loadPackage(["micropip"]);
+    window.pyodide = pyodide;
+    return pyodide;
+  })();
+</script>
   <script type="module" src="app.js"></script>
   <script src="sw.js"></script>
 </body>
