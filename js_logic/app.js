@@ -34,10 +34,11 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
   document.querySelectorAll(".difficulty-card").forEach(card => {
     card.addEventListener("click", async () => {
-      console.log("Card clicked:", card);
+      
       difficulty = card.dataset.difficulty;
+      console.log(difficulty);
       document.getElementById("mode-infini-title").textContent = `♾️ Mode Infini - ${difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}`;
-      await loadRandomImage("infinite");
+      await loadRandomImage("infinite",difficulty);
       startTimer();
       showScreen(infiniteModeDiv);
     });
@@ -45,7 +46,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   document.getElementById("mode-challenge-btn").addEventListener("click", () => {
     showScreen(challengeModeDiv);
-    loadRandomImage("challenge");
+    loadRandomImage("challenge",difficulty);
   });
 
   document.getElementById("back-from-infinite").addEventListener("click", () => {
@@ -59,7 +60,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 
   document.getElementById("skip-current-champ").addEventListener("click", () => {
-    loadRandomImage("infinite");
+    loadRandomImage("infinite",difficulty);
   });
 });
 

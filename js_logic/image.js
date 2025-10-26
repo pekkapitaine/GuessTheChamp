@@ -5,7 +5,7 @@ let currentChampion = null;
 let currentImage = null;
 let currentSoluce = null;
 
-export async function loadRandomImage(mode) {
+export async function loadRandomImage(mode, difficulty) {
   if (mode !== "infinite") {
     // Mode challenge ou autre
     document.getElementById("champ-image-challenge").src = "ImagesChamps/DefaultChamps/Yasuo.png";
@@ -28,8 +28,8 @@ export async function loadRandomImage(mode) {
     const randomEntry = champions[Math.floor(Math.random() * champions.length)];
 
     // Déterminer la pixelisation selon difficulty
-    const difficulties = { easy: 20, medium: 33, hard: 46, extreme: 59 };
-    const pixelSize = difficulties[difficulty] || 33;
+    const difficulties = { facile: 20, moyen: 33, difficile: 46, extreme: 59 };
+    const pixelSize = difficulties[difficulty];
 
     const folder = randomEntry.category === "skin" ? "SkinChamps" : "DefaultChamps";
     const imagePath = `ImagesChamps/${folder}/${randomEntry.file}`;
