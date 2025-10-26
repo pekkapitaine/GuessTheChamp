@@ -1,4 +1,4 @@
-const CACHE_NAME = "lol-pixel-guesser-v0.0.1";
+const CACHE_NAME = "lol-pixel-guesser-v0.0.2";
 const urlsToCache = [
   "./",
   "./index.html",
@@ -11,7 +11,6 @@ const urlsToCache = [
 
 // Installation du Service Worker
 self.addEventListener("install", (event) => {
-  console.log("📦 Service Worker : installation...");
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => cache.addAll(urlsToCache))
   );
@@ -39,5 +38,5 @@ self.addEventListener("fetch", (event) => {
 });
 
 self.addEventListener('controllerchange', () => {
-  console.log("🔄 Nouvelle version du Service Worker activée !");
+  console.log("nouvelle maj !");
 });
