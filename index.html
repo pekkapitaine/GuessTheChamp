@@ -27,17 +27,17 @@
     <div class="mode-section">
       <h2>♾️ Mode Infini</h2>
       <div class="card-container">
-        <div class="difficulty-card" data-difficulty="easy">
+        <div class="difficulty-card" data-difficulty="facile">
           <img src="./assets/smileys/easy_smiley.png" class="smiley">
           <h3>Facile</h3>
           <p>Débutant tranquille</p>
         </div>
-        <div class="difficulty-card" data-difficulty="medium">
+        <div class="difficulty-card" data-difficulty="moyen">
           <img src="./assets/smileys/medium_smiley.png" class="smiley">
           <h3>Moyen</h3>
           <p>Un peu de piquant</p>
         </div>
-        <div class="difficulty-card" data-difficulty="hard">
+        <div class="difficulty-card" data-difficulty="difficile">
           <img src="./assets/smileys/hard_smiley.png" class="smiley">
           <h3>Difficile</h3>
           <p>Challenge sérieux</p>
@@ -70,7 +70,7 @@
 <div class="container" id="infinite-mode" style="display:none;">
   <button id="back-from-infinite" class="back-btn"><img src="assets/interface/back_arrow.svg"></button>
 
-  <h2>♾️ Mode Infini</h2>
+  <h2 id="mode-infini-title"></h2>
 
   <div class="game-area">
     <div class="side-panel left">
@@ -167,7 +167,7 @@
 </div>
   <!-- ⚙️ Scripts -->
   <script src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
-  <script type="module" src="app.js"></script>
+  <script type="module" src="js_logic/app.js"></script>
   <script src="sw.js"></script>
 </body>
 </html>

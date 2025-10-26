@@ -16,7 +16,7 @@ html, body {
   user-select: none;
   font-size: clamp(12px, 4vw, 20px);
   scrollbar-width: thin;
-  scrollbar-color: #f8d24b #1a1d22
+  scrollbar-color: #f8d24b #1a1d22;
 }
 
 a {
@@ -69,10 +69,10 @@ footer {
   width: 100%;
   background-color: #111;
   color: white;
-  padding: 10px 0;
   text-align: center;
+  padding-block: clamp(6px, 1vh, 12px); /* min, préféré, max */
+  font-size: clamp(12px, 1.2vh, 16px); /* adapte la taille du texte aussi */
 }
-
 
 
 /* 🌟 ACCUEIL GAMING STYLE */

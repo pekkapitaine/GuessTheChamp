@@ -1,4 +1,4 @@
-const difficulties = ["easy", "medium", "hard", "extreme"];
+const difficulties = {"facile" : "easy", "moyen" : "medium", "difficile" : "hard", "extreme" : "extreme"};
 const defaultDir = "ImagesChampPixel/DefaultChampsPixel";
 const skinDir = "ImagesChampPixel/SkinChampsPixel";
 
@@ -15,8 +15,6 @@ async function extractFilenames(response) {
     !name.endsWith("/") && !name.includes("Parent Directory")
   );
 }
-
-
 
 // -----------------------------
 // 🔧 SERVICE WORKER & PWA
@@ -64,11 +62,6 @@ btnIOS.addEventListener("click", () => {
   contentIOS.classList.remove("hidden");
   contentAndroid.classList.add("hidden");
 });
-
-
-
-// --- SERVICE WORKER (toujours enregistré si supporté) ---
-
 
 // --- FONCTION : vérifier si l'app est déjà installée ---
 function isAppInstalled() {
@@ -222,7 +215,7 @@ document.addEventListener("DOMContentLoaded", () => {
   document.querySelectorAll(".difficulty-card").forEach(card => {
     card.addEventListener("click", async () => {
       difficulty = card.dataset.difficulty;
-
+      document.getElementById("mode-infini-title").textContent = `♾️ Mode Infini - ${difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}`;
       await loadRandomImage("infinite");
       startTimer();
       showScreen(infiniteModeDiv);
@@ -235,26 +228,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   document.getElementById("back-from-infinite").addEventListener("click", () => {
-    stopTimer();async function initializeApp() {
-  try {
-    showLoader();  // 1️⃣ affiche le loader
-    pyodide = await loadPyodide();
-    await loadGameModule();
-    await pyodide.runPythonAsync("import game");
-
-    const response = await fetch("champions_list.json");
-    championsList = await response.json();
-
-    hideLoader();  // 2️⃣ Pyodide prêt, on cache le loader
-    isReady = true;
-
-    // 3️⃣ afficher le modal d'installation après le loader
-    showInstallModalIfNeeded();
-  } catch (error) {
-    console.error("❌ Erreur lors de l'initialisation :", error);
-    showLoader("Erreur de chargement. Recharge la page.");
-  }
-}
+    stopTimer();
     showScreen(welcomeScreen);
   });
 
@@ -361,9 +335,6 @@ function setupLiveSuggestions(inputId, suggestionsId, onValidate) {
 }
 
 
-
-
-
 setupLiveSuggestions("champ-input", "suggestions", (value) => {
   checkChampionGuess(value, "infinite");
 });
@@ -381,33 +352,37 @@ let currentSoluce = null;
 
 async function loadRandomImage(mode) {
   if (mode === "infinite") {
-    // Si on passe une difficulté depuis la carte, on l'utilise, sinon on lit le select
     const includeSkins = document.getElementById("include-skins").checked ? "True" : "False";
 
     try {
       const result = await pyodide.runPythonAsync(`
         from game import get_random_champion
-        get_random_champion("${difficulty}", ${includeSkins})
-        `);
+        get_random_champion("${difficulties[difficulty]}", ${includeSkins})
+      `);
+
       const data = JSON.parse(result);
 
       currentChampion = data.champion;
       currentImage = data.image;
       currentSoluce = data.image_soluce;
+
       console.log("Données reçues de Python, champion :", currentChampion, "image :", currentImage, "soluce :", currentSoluce);
 
-      document.getElementById("champ-image").src = currentImage;
+      // Créer une promesse pour attendre que l'image soit chargée
+      await new Promise((resolve, reject) => {
+        const img = document.getElementById("champ-image");
+        img.onload = () => resolve();
+        img.onerror = () => reject("Erreur de chargement de l'image");
+        img.src = currentImage;
+      });
 
     } catch (err) {
       console.error("Erreur :", err);
     }
   } else {
-    // Placeholder pour le mode challenge
     document.getElementById("champ-image-challenge").src = "/ImagesChampPixel/DefaultChampsPixel/easy/Yasuo-default.png";
   }
 }
-
-
 
 // -----------------------------
 // 🏁 VALIDATION
