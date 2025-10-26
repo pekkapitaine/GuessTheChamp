@@ -1,4 +1,4 @@
-const CACHE_NAME = "lol-pixel-guesser-v3"; // ← incrémente à chaque nouvelle version
+const CACHE_NAME = "lol-pixel-guesser-v0.0.1";
 const urlsToCache = [
   "./",
   "./index.html",
@@ -7,7 +7,6 @@ const urlsToCache = [
   "./manifest.webmanifest",
   "./assets/favicon/favicon192.png",
   "./assets/favicon/favicon512.png",
-  // ajoute ici toutes tes images / assets nécessaires
 ];
 
 // Installation du Service Worker
@@ -19,7 +18,6 @@ self.addEventListener("install", (event) => {
   self.skipWaiting();
 });
 
-// Activation et suppression des anciens caches
 self.addEventListener("activate", (event) => {
   console.log("⚡ Service Worker activé !");
   event.waitUntil(
@@ -34,7 +32,6 @@ self.addEventListener("activate", (event) => {
   self.clients.claim();
 });
 
-// Interception des requêtes pour le cache
 self.addEventListener("fetch", (event) => {
   event.respondWith(
     caches.match(event.request).then((response) => response || fetch(event.request))
