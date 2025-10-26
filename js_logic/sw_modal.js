@@ -59,7 +59,7 @@ export function showInstallModalIfNeeded() {
   if (isAppInstalled()) return;
 
   // --- Android / navigateur supportant beforeinstallprompt ---
-  if (deferredPrompt && isReady) {
+  if (deferredPrompt) {
     modal.classList.remove('hidden');
     btnAndroid.classList.add("active");
     btnIOS.classList.remove("active");
