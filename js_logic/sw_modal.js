@@ -3,10 +3,24 @@
 // 🔧 SERVICE WORKER & PWA
 // -----------------------------
 if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js')
-      .then(() => console.log('SW registered'))
-      .catch(err => console.error('SW failed', err));
+  window.addEventListener('load', async () => {
+    try {
+      const registration = await navigator.serviceWorker.register('./sw.js');
+      console.log("✅ SW enregistré", registration);
+
+      // Force la vérification d’une nouvelle version
+      registration.update();
+
+      // 🔔 Écoute les messages envoyés depuis le SW
+      navigator.serviceWorker.addEventListener('message', (event) => {
+        if (event.data?.type === 'NEW_VERSION_AVAILABLE') {
+          if (majModal) majModal.classList.remove('hidden');
+        }
+      });
+
+    } catch (err) {
+      console.error("❌ Erreur SW :", err);
+    }
   });
 }
 
@@ -28,6 +42,8 @@ const contentAndroid = document.getElementById("content-android");
 const contentIOS = document.getElementById("content-ios");
 const closeModal = document.getElementById("close-modal");
 const installBtn = document.getElementById('install-btn');
+const majModal = document.getElementById('maj-modal')
+const majBtn = document.getElementById('maj-btn')
 
 // --- FERMETURE POPIN ---
 closeModal.addEventListener("click", () => modal.classList.add("hidden"));
@@ -79,6 +95,15 @@ export function showInstallModalIfNeeded() {
   }
 }
 
+if (majBtn) {
+  majBtn.addEventListener('click', () => {
+    if (navigator.serviceWorker.controller) {
+      navigator.serviceWorker.controller.postMessage({ type: "SKIP_WAITING" });
+    }
+    window.location.reload();
+    majModal.classList.add('hidden');
+  }); 
+}
 // --- BOUTON INSTALLATION ---
 if (installBtn) {
   installBtn.addEventListener('click', async () => {

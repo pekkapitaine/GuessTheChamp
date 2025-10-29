@@ -1,4 +1,5 @@
-const CACHE_NAME = "lol-pixel-guesser-v0.0.2";
+// sw.js
+const CACHE_NAME = "lol-pixel-guesser-v0.0.tesfet1eaa";
 const urlsToCache = [
   "./",
   "./index.html",
@@ -9,34 +10,58 @@ const urlsToCache = [
   "./assets/favicon/favicon512.png",
 ];
 
-// Installation du Service Worker
+// --- INSTALLATION ---
 self.addEventListener("install", (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => cache.addAll(urlsToCache))
   );
-  self.skipWaiting();
+  self.skipWaiting(); // permet l'activation immédiate
 });
 
-self.addEventListener("activate", (event) => {
-  console.log("⚡ Service Worker activé !");
+// --- ACTIVATION ---
+self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keys) =>
-      Promise.all(
-        keys
-          .filter((key) => key !== CACHE_NAME)
-          .map((key) => caches.delete(key))
-      )
+      Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))
     )
   );
+
   self.clients.claim();
+  self.clients.matchAll().then(clients => {
+    clients.forEach(client => client.postMessage({ type: 'NEW_VERSION_AVAILABLE' }));
+  });
 });
 
+
+// --- FETCH (offline support) ---
 self.addEventListener("fetch", (event) => {
   event.respondWith(
-    caches.match(event.request).then((response) => response || fetch(event.request))
+    caches.match(event.request).then((cached) => cached || fetch(event.request))
   );
 });
 
-self.addEventListener('controllerchange', () => {
-  console.log("nouvelle maj !");
+// --- 🔥 DÉTECTION DE NOUVELLE VERSION ---
+self.addEventListener("message", (event) => {
+  if (event.data && event.data.type === "CHECK_FOR_UPDATE") {
+    self.registration.update(); // force la vérification du SW distant
+  }
+  if (event.data?.type === "SKIP_WAITING") {
+    self.skipWaiting(); // force le SW à devenir actif
+  }
+});
+
+// Quand une nouvelle version du SW est trouvée
+self.addEventListener("updatefound", () => {
+  const newSW = self.registration.installing;
+  if (newSW) {
+    newSW.addEventListener("statechange", () => {
+      if (newSW.state === "installed") {
+        self.clients.matchAll().then((clients) => {
+          clients.forEach((client) => {
+            client.postMessage({ type: "NEW_VERSION_AVAILABLE" });
+          });
+        });
+      }
+    });
+  }
 });
