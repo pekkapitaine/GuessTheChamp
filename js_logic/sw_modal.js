@@ -1,38 +1,45 @@
+// ===============================
+// 🌐 CLIENT : script principal
+// ===============================
 
-// -----------------------------
-// 🔧 SERVICE WORKER & PWA
-// -----------------------------
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', async () => {
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", async () => {
     try {
-      const registration = await navigator.serviceWorker.register('./sw.js');
+      const registration = await navigator.serviceWorker.register("./sw.js");
       console.log("✅ SW enregistré", registration);
 
-      // Force la vérification d’une nouvelle version
+      // 🔍 Force une vérification à chaque démarrage
       registration.update();
 
-      // 🔔 Écoute les messages envoyés depuis le SW
-      navigator.serviceWorker.addEventListener('message', (event) => {
-        if (event.data?.type === 'NEW_VERSION_AVAILABLE') {
-          if (majModal) majModal.classList.remove('hidden');
-        }
+      // ⚡ Détection de nouvelle version
+      registration.addEventListener("updatefound", () => {
+        const newWorker = registration.installing;
+        newWorker.addEventListener("statechange", () => {
+          if (newWorker.state === "installed" && navigator.serviceWorker.controller) {
+            if (majModal) majModal.classList.remove("hidden");
+          }
+        });
       });
 
+      // 🔔 Communication SW -> Client
+      navigator.serviceWorker.addEventListener("message", (event) => {
+        if (event.data?.type === "NEW_VERSION_AVAILABLE") {
+          if (majModal) majModal.classList.remove("hidden");
+        }
+      });
     } catch (err) {
       console.error("❌ Erreur SW :", err);
     }
   });
 }
 
-// --- ÉVÉNEMENT INSTALLATION ---
+// --- INSTALLATION PWA ---
 window.addEventListener("beforeinstallprompt", (e) => {
   e.preventDefault();
   deferredPrompt = e;
   showInstallModalIfNeeded();
-  
 });
 
-// --- VARIABLES ---
 let deferredPrompt;
 const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
 const modal = document.getElementById("install-modal");
@@ -41,9 +48,9 @@ const btnIOS = document.getElementById("tab-ios");
 const contentAndroid = document.getElementById("content-android");
 const contentIOS = document.getElementById("content-ios");
 const closeModal = document.getElementById("close-modal");
-const installBtn = document.getElementById('install-btn');
-const majModal = document.getElementById('maj-modal')
-const majBtn = document.getElementById('maj-btn')
+const installBtn = document.getElementById("install-btn");
+const majModal = document.getElementById("maj-modal");
+const majBtn = document.getElementById("maj-btn");
 
 // --- FERMETURE POPIN ---
 closeModal.addEventListener("click", () => modal.classList.add("hidden"));
@@ -63,63 +70,54 @@ btnIOS.addEventListener("click", () => {
   contentAndroid.classList.add("hidden");
 });
 
-// --- FONCTION : vérifier si l'app est déjà installée ---
+// --- INSTALLATION / iOS ---
 function isAppInstalled() {
-  return window.matchMedia('(display-mode: standalone)').matches
-      || window.navigator.standalone === true; // iOS Safari
+  return window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
 }
 
-// --- FONCTION : afficher la popin si besoin ---
 export function showInstallModalIfNeeded() {
-  // Si l'app est déjà installée, ne rien faire
   if (isAppInstalled()) return;
 
-  // --- Android / navigateur supportant beforeinstallprompt ---
   if (deferredPrompt) {
-    modal.classList.remove('hidden');
+    modal.classList.remove("hidden");
     btnAndroid.classList.add("active");
-    btnIOS.classList.remove("active");
     contentAndroid.classList.remove("hidden");
     contentIOS.classList.add("hidden");
     return;
   }
 
-  // --- iOS (Safari) ---
   if (isIOS) {
-    modal.classList.remove('hidden');
+    modal.classList.remove("hidden");
     btnIOS.classList.add("active");
-    btnAndroid.classList.remove("active");
     contentIOS.classList.remove("hidden");
     contentAndroid.classList.add("hidden");
-    return;
   }
 }
 
+// --- BOUTON MAJ ---
 if (majBtn) {
-  majBtn.addEventListener('click', () => {
-    if (navigator.serviceWorker.controller) {
-      navigator.serviceWorker.controller.postMessage({ type: "SKIP_WAITING" });
+  majBtn.addEventListener("click", async () => {
+    const reg = await navigator.serviceWorker.getRegistration();
+    if (reg?.waiting) {
+      reg.waiting.postMessage({ type: "SKIP_WAITING" });
     }
-    window.location.reload();
-    majModal.classList.add('hidden');
-  }); 
+    navigator.serviceWorker.addEventListener("controllerchange", () => {
+      window.location.reload();
+    });
+  });
 }
-// --- BOUTON INSTALLATION ---
+
+// --- BOUTON INSTALL ---
 if (installBtn) {
-  installBtn.addEventListener('click', async () => {
+  installBtn.addEventListener("click", async () => {
     if (deferredPrompt) {
-      deferredPrompt.prompt();   // lance l'installation PWA
+      deferredPrompt.prompt();
       const choice = await deferredPrompt.userChoice;
-      if (choice.outcome === 'accepted') {
-        console.log('App installée !');
-      }
+      if (choice.outcome === "accepted") console.log("App installée !");
       deferredPrompt = null;
-      modal.classList.add('hidden'); // fermer la popin après installation
+      modal.classList.add("hidden");
     } else {
       alert("Sur iOS, utilisez le bouton 'Partager' puis 'Sur l'écran d'accueil'");
     }
   });
-}
-
-
-
+};
