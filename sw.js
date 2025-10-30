@@ -1,7 +1,4 @@
-// ===============================
-// 🧩 SERVICE WORKER : sw.js
-// ===============================
-const CACHE_NAME = "lol-pixel-guesser-v0.0.www";
+const CACHE_NAME = "lol-pixel-guesser-v0.0.zeezrzezer";
 const urlsToCache = [
   "./",
   "./index.html",
@@ -14,24 +11,24 @@ const urlsToCache = [
 
 // --- INSTALLATION ---
 self.addEventListener("install", (event) => {
+  console.log("[SW] Nouvelle version installée.");
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => cache.addAll(urlsToCache))
   );
-  self.skipWaiting(); // ⚡ activation immédiate
 });
 
 // --- ACTIVATION ---
 self.addEventListener("activate", (event) => {
+  console.log("[SW] Activé, prêt à contrôler les pages.");
   event.waitUntil(
-    (async () => {
-      const keys = await caches.keys();
-      await Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)));
-      await self.clients.claim();
-    })()
+    caches.keys().then((keys) =>
+      Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))
+    )
   );
+  return self.clients.claim();
 });
-
-// --- FETCH (network first, fallback cache) ---
+  
+// --- FETCH ---
 self.addEventListener("fetch", (event) => {
   event.respondWith(
     fetch(event.request)
@@ -44,12 +41,10 @@ self.addEventListener("fetch", (event) => {
   );
 });
 
-// --- COMMUNICATION AVEC LE CLIENT ---
+// --- MESSAGE ---
 self.addEventListener("message", (event) => {
-  if (event.data?.type === "CHECK_FOR_UPDATE") {
-    self.registration.update();
-  }
   if (event.data?.type === "SKIP_WAITING") {
+    console.log("[SW] Skip waiting demandé → activation immédiate");
     self.skipWaiting();
   }
 });

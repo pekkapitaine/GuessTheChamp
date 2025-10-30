@@ -1,0 +1,133 @@
+import os
+import json
+
+# 🔹 Chemin du dossier contenant les fichiers d'items
+folder_path = r"C:\Users\gabri\Documents\projet_dev_personnel\GuessTheChamp\ImagesItems"
+
+# 🔹 Chemin du fichier de sortie JSON
+output_file = os.path.join(folder_path, r"..\items_translation.json")
+
+# 🔹 Dictionnaire des traductions connues (complétées logiquement)
+translations = {
+    "Abyssal_Mask_item_HD.png": "Masque abyssal",
+    "Aegis_of_the_Legion_item_HD.png": "Égide de la Légion",
+    "Aether_Wisp_item_HD.png": "Volute d’éther",
+    "Amplifying_Tome_item_HD.png": "Tome d’amplification",
+    "Anathema's_Chains_item_HD.png": "Chaînes d’anathème",
+    "Archangel's_Staff_item_HD.png": "Bâton de l’archange",
+    "Ardent_Censer_item_HD.png": "Encensoir ardent",
+    "Axiom_Arc_item_HD.png": "Arc axiomatique",
+    "B._F._Sword_item_HD.png": "Épée longue",
+    "Bami's_Cinder_item_HD.png": "Cendres de Bami",
+    "Banshee's_Veil_item_HD.png": "Voile de la banshee",
+    "Berserker's_Greaves_item_HD.png": "Jambières du berserker",
+    "Black_Cleaver_item_HD.png": "Couperet noir",
+    "Blade_of_the_Ruined_King_item_HD.png": "Lame du roi déchu",
+    "Bloodthirster_item_HD.png": "Soif-de-sang",
+    "Boots_of_Swiftness_item_HD.png": "Bottes de célérité",
+    "Bramble_Vest_item_HD.png": "Cotte épineuse",
+    "Catalyst_of_Aeons_item_HD.png": "Catalyseur des âges",
+    "Caulfield's_Warhammer_item_HD.png": "Marteau de guerre de Caulfield",
+    "Chempunk_Chainsword_item_HD.png": "Épée chimico-punk enchaînée",
+    "Cloak_of_Agility_item_HD.png": "Cape d’agilité",
+    "Control_Ward_item_HD.png": "Balise de contrôle",
+    "Cosmic_Drive_item_HD.png": "Propulseur cosmique",
+    "Crown_of_the_Shattered_Queen_item_HD.png": "Couronne de la reine déchue",
+    "Doran's_Blade_item_HD.png": "Lame de Doran",
+    "Doran's_Ring_item_HD.png": "Anneau de Doran",
+    "Doran's_Shield_item_HD.png": "Bouclier de Doran",
+    "Duskblade_of_Draktharr_item_HD.png": "Lame spectre de Draktharr",
+    "Eclipse_item_HD.png": "Éclipse",
+    "Edge_of_Night_item_HD.png": "Lisière de la nuit",
+    "Elixir_of_Iron_item_HD.png": "Élixir de fer",
+    "Elixir_of_Sorcery_item_HD.png": "Élixir de sorcellerie",
+    "Elixir_of_Wrath_item_HD.png": "Élixir de colère",
+    "Essence_Reaver_item_HD.png": "Refonte d’essence",
+    "Everfrost_item_HD.png": "Éternelgel",
+    "Executioner's_Calling_item_HD.png": "Appel du bourreau",
+    "Frozen_Heart_item_HD.png": "Cœur gelé",
+    "Galeforce_item_HD.png": "Force du vent",
+    "Gargoyle_Stoneplate_item_HD.png": "Plastron de pierre de gargouille",
+    "Goredrinker_item_HD.png": "Gorgepierre",
+    "Guardian_Angel_item_HD.png": "Ange gardien",
+    "Guinsoo's_Rageblade_item_HD.png": "Lame de la rage de Guinsoo",
+    "Hexdrinker_item_HD.png": "Buveur d’hex",
+    "Hextech_Rocketbelt_item_HD.png": "Ceinture-roquette Hextech",
+    "Horizon_Focus_item_HD.png": "Concentration de l’horizon",
+    "Hullbreaker_item_HD.png": "Brise-coques",
+    "Iceborn_Gauntlet_item_HD.png": "Gantelet givrant",
+    "Immortal_Shieldbow_item_HD.png": "Arc bouclier immortel",
+    "Imperial_Mandate_item_HD.png": "Mandat impérial",
+    "Infinity_Edge_item_HD.png": "Lame d’infini",
+    "Ionian_Boots_of_Lucidity_item_HD.png": "Bottes de lucidité ioniennes",
+    "Kraken_Slayer_item_HD.png": "Tueur de kraken",
+    "Liandry's_Torment_item_HD.png": "Tourment de Liandry",
+    "Lich_Bane_item_HD.png": "Fléau de liche",
+    "Locket_of_the_Iron_Solari_item_HD.png": "Médaillon de l’Iron Solari",
+    "Lord_Dominik's_Regards_item_HD.png": "Rappel de Lord Dominik",
+    "Luden's_Companion_item_HD.png": "Compagnon de Luden",
+    "Manamune_item_HD.png": "Manamune",
+    "Maw_of_Malmortius_item_HD.png": "Mâchoire de Malmortius",
+    "Mejai's_Soulstealer_item_HD.png": "Vol de l’âme de Mejai",
+    "Mercurial_Scimitar_item_HD.png": "Cimeterre mercuriel",
+    "Mercury's_Treads_item_HD.png": "Sandales de Mercure",
+    "Mikael's_Blessing_item_HD.png": "Bénédiction de Mikael",
+    "Moonstone_Renewer_item_HD.png": "Renouvellement de la pierre de lune",
+    "Morellonomicon_item_HD.png": "Morellonomicon",
+    "Mortal_Reminder_item_HD.png": "Rappel mortel",
+    "Muramana_item_HD.png": "Muramana",
+    "Nashor's_Tooth_item_HD.png": "Dent de Nashor",
+    "Night_Harvester_item_HD.png": "Moissonneur nocturne",
+    "Phantom_Dancer_item_HD.png": "Danseur fantôme",
+    "Plated_Steelcaps_item_HD.png": "Coques en acier",
+    "Prowler's_Claw_item_HD.png": "Griffe du rôdeur",
+    "Quicksilver_Sash_item_HD.png": "Voile d’argent",
+    "Rabadon's_Deathcap_item_HD.png": "Coiffe de Rabadon",
+    "Randuin's_Omen_item_HD.png": "Présage de Randuin",
+    "Rapid_Firecannon_item_HD.png": "Canon ultrarapide",
+    "Ravenous_Hydra_item_HD.png": "Hydre vorace",
+    "Redemption_item_HD.png": "Rédemption",
+    "Refillable_Potion_item_HD.png": "Potion rechargeable",
+    "Riftmaker_item_HD.png": "Faiseur de faille",
+    "Rod_of_Ages_item_HD.png": "Bâton des âges",
+    "Runaan's_Hurricane_item_HD.png": "Ouragan de Runaan",
+    "Rylai's_Crystal_Scepter_item_HD.png": "Sceptre de Rylai",
+    "Seraph's_Embrace_item_HD.png": "Étreinte séraphique",
+    "Serylda's_Grudge_item_HD.png": "Rancune de Serylda",
+    "Shadowflame_item_HD.png": "Flamme-ombre",
+    "Sheen_item_HD.png": "Brillance",
+    "Shurelya's_Battlesong_item_HD.png": "Chant de bataille de Shurelya",
+    "Sorcerer's_Shoes_item_HD.png": "Chaussures du sorcier",
+    "Spear_of_Shojin_item_HD.png": "Lance de Shojin",
+    "Spirit_Visage_item_HD.png": "Visage spirituel",
+    "Staff_of_Flowing_Water_item_HD.png": "Bâton des flots",
+    "Statikk_Shiv_item_HD.png": "Poignard de Statikk",
+    "Sterak's_Gage_item_HD.png": "Gage de Sterak",
+    "Stormrazor_item_HD.png": "Ras-de-tempête",
+    "Stridebreaker_item_HD.png": "Brise-pas",
+    "Sunfire_Aegis_item_HD.png": "Égide solaire",
+    "Thornmail_item_HD.png": "Cotte épineuse",
+    "Tiamat_item_HD.png": "Tiamat",
+    "Titanic_Hydra_item_HD.png": "Hydre titanesque",
+    "Trinity_Force_item_HD.png": "Force de la trinité",
+    "Umbral_Glaive_item_HD.png": "Glaive d’ombre",
+    "Void_Staff_item_HD.png": "Bâton du vide",
+    "Warmog's_Armor_item_HD.png": "Armure de Warmog",
+    "Wit's_End_item_HD.png": "Fin de l’esprit",
+    "Youmuu's_Ghostblade_item_HD.png": "Lame spectre de Youmuu",
+    "Zeke's_Convergence_item_HD.png": "Convergence de Zeke",
+    "Zhonya's_Hourglass_item_HD.png": "Sablier de Zhonya",
+}
+
+# 🔹 Génération automatique du JSON
+data = {}
+for filename in os.listdir(folder_path):
+    if os.path.isfile(os.path.join(folder_path, filename)):
+        data[filename] = translations.get(filename, "")
+
+# 🔹 Écriture dans le fichier JSON
+with open(output_file, "w", encoding="utf-8") as f:
+    json.dump(data, f, indent=4, ensure_ascii=False)
+
+print(f"✅ Fichier généré : {output_file}")
+print(f"Nombre d’éléments : {len(data)}")

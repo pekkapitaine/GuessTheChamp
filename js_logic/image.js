@@ -5,13 +5,7 @@ let currentChampion = null;
 let currentImage = null;
 let currentSoluce = null;
 
-export async function loadRandomImage(mode, difficulty) {
-  if (mode !== "infinite") {
-    // Mode challenge ou autre
-    document.getElementById("champ-image-challenge").src = "ImagesChamps/DefaultChamps/Yasuo.png";
-    return;
-  }
-
+export async function loadRandomChampImage(difficulty) {
   try {
     const includeSkins = document.getElementById("include-skins").checked;
 
@@ -125,9 +119,9 @@ export function checkChampionGuess(guess, mode = 'infinite') {
     setTimeout(() => {
       resultDiv.classList.remove("visible");
       if (mode === 'infinite') {
-        loadRandomImage("infinite");
+        loadRandomChampImage();
       } else {
-        loadRandomImage("challenge");
+        //loadRandomImage("challenge");
       }
     }, 1000);
 

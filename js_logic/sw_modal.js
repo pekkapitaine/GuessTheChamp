@@ -8,25 +8,36 @@ if ("serviceWorker" in navigator) {
       const registration = await navigator.serviceWorker.register("./sw.js");
       console.log("✅ SW enregistré", registration);
 
-      // 🔍 Force une vérification à chaque démarrage
-      registration.update();
+      // 🔁 Vérifie toutes les 10s les updates
+      setInterval(() => registration.update(), 10000);
 
-      // ⚡ Détection de nouvelle version
+      // 🧠 1. Si une version est déjà en attente au moment du chargement
+      if (registration.waiting) {
+        console.log("🕐 Une version est déjà en attente au chargement");
+        showUpdateModal();
+      }
+
+      // 🧠 2. Quand une nouvelle version est détectée
       registration.addEventListener("updatefound", () => {
         const newWorker = registration.installing;
+        console.log("[SW] Nouvelle version détectée (updatefound)");
+        if (!newWorker) return;
+
         newWorker.addEventListener("statechange", () => {
+          console.log("[SW] Changement d’état :", newWorker.state);
           if (newWorker.state === "installed" && navigator.serviceWorker.controller) {
-            if (majModal) majModal.classList.remove("hidden");
+            console.log("🆕 Nouvelle version prête mais pas encore active");
+            showUpdateModal();
           }
         });
       });
 
-      // 🔔 Communication SW -> Client
-      navigator.serviceWorker.addEventListener("message", (event) => {
-        if (event.data?.type === "NEW_VERSION_AVAILABLE") {
-          if (majModal) majModal.classList.remove("hidden");
-        }
+      // 🧠 3. Quand le nouveau SW prend la main
+      navigator.serviceWorker.addEventListener("controllerchange", () => {
+        console.log("♻️ Nouveau SW actif → rechargement");
+        window.location.reload();
       });
+
     } catch (err) {
       console.error("❌ Erreur SW :", err);
     }
@@ -51,6 +62,16 @@ const closeModal = document.getElementById("close-modal");
 const installBtn = document.getElementById("install-btn");
 const majModal = document.getElementById("maj-modal");
 const majBtn = document.getElementById("maj-btn");
+
+
+function showUpdateModal() {
+  if (!majModal) {
+    console.warn("⚠️ maj-modal introuvable !");
+    return;
+  }
+  console.log("📢 Affichage de la popin de mise à jour !");
+  majModal.classList.remove("hidden");
+}
 
 // --- FERMETURE POPIN ---
 closeModal.addEventListener("click", () => modal.classList.add("hidden"));
@@ -94,18 +115,17 @@ export function showInstallModalIfNeeded() {
   }
 }
 
-// --- BOUTON MAJ ---
+
 if (majBtn) {
   majBtn.addEventListener("click", async () => {
     const reg = await navigator.serviceWorker.getRegistration();
     if (reg?.waiting) {
+      console.log("📩 Envoi du message SKIP_WAITING au SW");
       reg.waiting.postMessage({ type: "SKIP_WAITING" });
     }
-    navigator.serviceWorker.addEventListener("controllerchange", () => {
-      window.location.reload();
-    });
   });
 }
+
 
 // --- BOUTON INSTALL ---
 if (installBtn) {

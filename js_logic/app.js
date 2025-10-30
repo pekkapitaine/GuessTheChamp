@@ -1,7 +1,7 @@
 import {showInstallModalIfNeeded} from './sw_modal.js';
 import {setupLiveSuggestions,loadChampionsList} from './champs_suggestions.js';
 import {startTimer, stopTimer} from './timer.js';
-import {loadRandomImage,checkChampionGuess} from './image.js';
+import {loadRandomChampImage,checkChampionGuess} from './image.js';
 
 let difficulty;
 document.addEventListener("DOMContentLoaded", () => {
@@ -38,7 +38,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       difficulty = card.dataset.difficulty;
       console.log(difficulty);
       document.getElementById("mode-infini-title").textContent = `♾️ Mode Infini - ${difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}`;
-      await loadRandomImage("infinite",difficulty);
+      await loadRandomChampImage(difficulty);
       startTimer();
       showScreen(infiniteModeDiv);
     });
@@ -46,7 +46,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   document.getElementById("mode-challenge-btn").addEventListener("click", () => {
     showScreen(challengeModeDiv);
-    loadRandomImage("challenge",difficulty);
+    //loadRandomImage("challenge",difficulty);
   });
 
   document.getElementById("back-from-infinite").addEventListener("click", () => {
@@ -60,7 +60,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 
   document.getElementById("skip-current-champ").addEventListener("click", () => {
-    loadRandomImage("infinite",difficulty);
+    loadRandomChampImage(difficulty);
   });
 });
 
