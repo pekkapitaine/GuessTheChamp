@@ -20,7 +20,15 @@ export function startTimer() {
 
 export function stopTimer() {
   clearInterval(timerInterval);
-  document.getElementById("timer").textContent = "⏱️ 00:00";
+  document.getElementById("timer").textContent = "00:00";
+  totalSeconds = 0;
+  attempts = 0;
+  correct = 0;
+  streak = 0;
+  document.getElementById("stat-attempts").textContent = 0;
+  document.getElementById("stat-correct").textContent = 0;
+  document.getElementById("stat-ratio").textContent = "0 / minute";
+  document.getElementById("stat-streak").textContent = 0;
 }
 
 export function incrementAttempts() {
