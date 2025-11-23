@@ -1,4 +1,5 @@
 
+
 let championsList = [];
 
 export async function loadChampionsList() {
@@ -21,8 +22,7 @@ export function setupLiveSuggestions(inputId, suggestionsId, onValidate) {
       focusedIndex = -1;
       return;
     }
-
-    const matches = championsList.filter(c => c.toLowerCase().includes(query));
+    const matches = sortWithPrefixPriority(championsList.filter(c => c.toLowerCase().includes(query)), query);
 
     // 🔹 Masquer si aucune correspondance
     if (!matches.length) {
@@ -76,6 +76,26 @@ export function setupLiveSuggestions(inputId, suggestionsId, onValidate) {
       }
     }
   });
+
+  function sortWithPrefixPriority(list, search) {
+  const lowerSearch = search.toLowerCase();
+  
+  return list.sort((a, b) => {
+    const A = a.toLowerCase();
+    const B = b.toLowerCase();
+
+    const aStarts = A.startsWith(lowerSearch);
+    const bStarts = B.startsWith(lowerSearch);
+
+    // 1. Priorité : ceux qui commencent par "tr"
+    if (aStarts && !bStarts) return -1;
+    if (!aStarts && bStarts) return 1;
+
+    // 2. Sinon, tri alphabétique normal
+    return A.localeCompare(B);
+  });
+}
+
 
   // 🔹 Gère le focus visuel + scroll automatique
   function updateFocus() {

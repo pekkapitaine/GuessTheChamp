@@ -1,11 +1,13 @@
+import { gameDifficulty } from './app.js';
+import {incrementAttempts, incrementCorrect, resetStreak } from './timer.js';
 // -----------------------------
 // 🧠 LOGIQUE MODE INFINI
 // -----------------------------
 let currentChampion = null;
-let currentImage = null;
+let currentImage
 let currentSoluce = null;
 
-export async function loadRandomChampImage(difficulty) {
+export async function loadRandomChampImage(gameDifficulty) {
   try {
     const includeSkins = document.getElementById("include-skins").checked;
 
@@ -20,17 +22,15 @@ export async function loadRandomChampImage(difficulty) {
 
     // Tirer un champion aléatoire
     const randomEntry = champions[Math.floor(Math.random() * champions.length)];
-
-    // Déterminer la pixelisation selon difficulty
+    // Déterminer la pixelisation selon gameDifficulty
     const difficulties = { facile: 20, moyen: 33, difficile: 46, extreme: 59 };
-    const pixelSize = difficulties[difficulty];
+    const pixelSize = difficulties[gameDifficulty];
 
     const folder = randomEntry.category === "skin" ? "SkinChamps" : "DefaultChamps";
     const imagePath = `ImagesChamps/${folder}/${randomEntry.file}`;
 
     // Pixeliser l'image dynamiquement
     const pixelizedSrc = await pixelizeImage(imagePath, pixelSize);
-    console.log("Pixelized src :", pixelizedSrc);
 
     // Afficher l'image
     const img = document.getElementById("champ-image");
@@ -61,6 +61,7 @@ function normalizeStr(s) {
     .normalize('NFD')                     // décompose les accents
     .replace(/[\u0300-\u036f]/g, '')      // supprime les diacritiques
     .replace(/\s+/g, ' ')                 // écrase espaces multiples
+    .replace('_',' ')
     .trim()
     .toLowerCase();
 }
@@ -71,6 +72,7 @@ function normalizeStr(s) {
  * Returns true if correct, false otherwise.
  */
 export function checkChampionGuess(guess, mode = 'infinite') {
+  incrementAttempts();
   guess = String(guess || '').trim();
   if (!guess) return false;
 
@@ -98,8 +100,10 @@ export function checkChampionGuess(guess, mode = 'infinite') {
   // Nettoie l'input / suggestions
   if (inputEl) inputEl.value = "";
   if (normalizedGuess === normalizedChampion) {
+    incrementCorrect();
     // ✅ Bonne réponse
     if (resultDiv) {
+      
       resultDiv.textContent = "✅ Correct !";
       resultDiv.style.color = "limegreen";
       resultDiv.classList.add("visible");
@@ -119,7 +123,8 @@ export function checkChampionGuess(guess, mode = 'infinite') {
     setTimeout(() => {
       resultDiv.classList.remove("visible");
       if (mode === 'infinite') {
-        loadRandomChampImage();
+        console.log(gameDifficulty)
+        loadRandomChampImage(gameDifficulty);
       } else {
         //loadRandomImage("challenge");
       }
@@ -128,6 +133,7 @@ export function checkChampionGuess(guess, mode = 'infinite') {
     return true;
   } else {
     // ❌ Mauvaise réponse
+    resetStreak();
     if (resultDiv) {
       resultDiv.textContent = "❌ Faux !";
       resultDiv.style.color = "red";
@@ -144,13 +150,13 @@ export function checkChampionGuess(guess, mode = 'infinite') {
 
 // Fonction de pixelisation JS
 async function pixelizeImage(src, pixelSize) {
-  const img = new Image();
-  img.src = src;
+const img = new Image();
+img.src = src;
 
-  await new Promise((resolve, reject) => {
-    img.onload = () => resolve();
-    img.onerror = () => reject("Erreur chargement image");
-  });
+await new Promise((resolve, reject) => {
+  img.onload = () => resolve();
+  img.onerror = () => reject("Erreur chargement image");
+});
 
   const canvas = document.createElement("canvas");
   const ctx = canvas.getContext("2d");

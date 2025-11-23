@@ -3,7 +3,8 @@ import {setupLiveSuggestions,loadChampionsList} from './champs_suggestions.js';
 import {startTimer, stopTimer} from './timer.js';
 import {loadRandomChampImage,checkChampionGuess} from './image.js';
 
-let difficulty;
+
+export let gameDifficulty;
 document.addEventListener("DOMContentLoaded", () => {
   console.log("DOM ready");
 });
@@ -13,10 +14,9 @@ showInstallModalIfNeeded();
 // -----------------------------
 const welcomeScreen = document.getElementById("welcome-screen");
 const infiniteModeDiv = document.getElementById("infinite-mode");
-const challengeModeDiv = document.getElementById("challenge-mode");
 
 function showScreen(screenDiv) {
-  [welcomeScreen, infiniteModeDiv, challengeModeDiv].forEach(div => {
+  [welcomeScreen, infiniteModeDiv].forEach(div => {
     if(div === screenDiv) div.style.display = "flex";
     else div.style.display = "none";
   });
@@ -29,24 +29,16 @@ document.addEventListener("DOMContentLoaded", async () => {
   checkChampionGuess(value, "infinite");
   });
 
-  setupLiveSuggestions("champ-input-challenge", "suggestions-challenge", (value) => {
-    checkChampionGuess(value, "challenge");
-  });
   document.querySelectorAll(".difficulty-card").forEach(card => {
     card.addEventListener("click", async () => {
       
-      difficulty = card.dataset.difficulty;
-      console.log(difficulty);
-      document.getElementById("mode-infini-title").textContent = `♾️ Mode Infini - ${difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}`;
-      await loadRandomChampImage(difficulty);
+      gameDifficulty = card.dataset.difficulty;
+      console.log(gameDifficulty);
+      document.getElementById("mode-infini-title").textContent = `♾️ Mode Infini - ${gameDifficulty.charAt(0).toUpperCase() + gameDifficulty.slice(1)}`;
+      await loadRandomChampImage(gameDifficulty);
       startTimer();
       showScreen(infiniteModeDiv);
     });
-  });
-
-  document.getElementById("mode-challenge-btn").addEventListener("click", () => {
-    showScreen(challengeModeDiv);
-    //loadRandomImage("challenge",difficulty);
   });
 
   document.getElementById("back-from-infinite").addEventListener("click", () => {
@@ -54,13 +46,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     showScreen(welcomeScreen);
   });
 
-    document.getElementById("back-from-challenge").addEventListener("click", () => {
-    stopTimer();
-    showScreen(welcomeScreen);
-  });
-
   document.getElementById("skip-current-champ").addEventListener("click", () => {
-    loadRandomChampImage(difficulty);
+    loadRandomChampImage(gameDifficulty);
   });
 });
 

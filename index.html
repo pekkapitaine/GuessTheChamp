@@ -29,22 +29,22 @@
     <div class="mode-section">
       <h2>♾️ Mode Infini</h2>
       <div class="card-container">
-        <div class="difficulty-card" data-difficulty="facile">
+        <div class="difficulty-card facile" data-difficulty="facile">
           <img src="./assets/smileys/easy_smiley.png" class="smiley">
           <h3>Facile</h3>
           <p>Débutant tranquille</p>
         </div>
-        <div class="difficulty-card" data-difficulty="moyen">
+        <div class="difficulty-card moyen" data-difficulty="moyen">
           <img src="./assets/smileys/medium_smiley.png" class="smiley">
           <h3>Moyen</h3>
           <p>Un peu de piquant</p>
         </div>
-        <div class="difficulty-card" data-difficulty="difficile">
+        <div class="difficulty-card difficile" data-difficulty="difficile">
           <img src="./assets/smileys/hard_smiley.png" class="smiley">
           <h3>Difficile</h3>
           <p>Challenge sérieux</p>
         </div>
-        <div class="difficulty-card" data-difficulty="extreme">
+        <div class="difficulty-card extreme" data-difficulty="extreme">
           <img src="./assets/smileys/extreme_smiley.png" class="smiley">
           <h3>Extreme</h3>
           <p>Fou du pixel !</p>
@@ -59,8 +59,8 @@
     <!-- MODE DÉFI -->
     <div class="mode-section">
       <h2>⚡ Mode Défi</h2>
-      <p>10 champions à deviner en 30 secondes !</p>
-      <button id="mode-challenge-btn" class="challenge-btn">Jouer</button>
+      <p>Le divertissement à son prime</p>
+      <a href="./challenges.html" id="mode-challenge-btn" class="challenge-btn">Jouer</a>
     </div>
   </div>
   <footer>
@@ -75,9 +75,37 @@
   <h2 id="mode-infini-title"></h2>
 
   <div class="game-area">
-    <div class="side-panel left">
-      <div id="timer" class="timer">⏱️ 00:00</div>
+    <div class="side-panel left stats-panel">
+
+      <div class="timer-block">
+        <div class="timer-label">⏱️ Temps</div>
+        <div id="timer" class="timer-value">00:00</div>
+      </div>
+
+      <div class="stats-block">
+        <div class="stat-row">
+          <span class="stat-label">🔍 Tentatives :</span>
+          <span id="stat-attempts" class="stat-value">0</span>
+        </div>
+
+        <div class="stat-row">
+          <span class="stat-label">✅ Bons :</span>
+          <span id="stat-correct" class="stat-value">0</span>
+        </div>
+
+        <div class="stat-row">
+          <span class="stat-label">🔥 Série :</span>
+          <span id="stat-streak" class="stat-value">0</span>
+        </div>
+
+        <div class="stat-row">
+          <span class="stat-label">📊 Ratio :</span>
+          <span id="stat-ratio" class="stat-value">0</span>
+        </div>
+      </div>
+
     </div>
+
 
     <div class="image-container">
       <img id="champ-image" src="" alt="Champion Pixelisé">
@@ -100,41 +128,6 @@
   <button id="skip-current-champ">Passer</button>
 </div>
 
-
-
-
-  <!-- ⚡ MODE DÉFI -->
-  <div class="container" id="challenge-mode" style="display:none;">
-    <button id="back-from-challenge" class="back-btn">⬅ Retour</button>
-    <h2>Mode Défi</h2>
-    <p>10 champions à deviner en moins de 30s !</p>
-    <div class="options">
-      <label for="difficulty">Difficulté :</label>
-      <select id="difficulty">
-        <option value="easy">Facile</option>
-        <option value="medium">Moyen</option>
-        <option value="hard">Difficile</option>
-        <option value="extreme">Extreme</option>
-      </select>
-
-      <label for="timer">Timer (sec) :</label>
-      <input type="number" id="timer" value="30" min="5" max="120">
-    </div>
-    <div class="image-container">
-      <img id="champ-image-challenge" src="" alt="Champion Pixelisé">
-    </div>
-
-    <div class="guess">
-      <input type="text" id="champ-input-challenge" placeholder="Tape le nom du champion...">
-      <div id="suggestions-challenge" class="suggestions"></div>
-      <button id="submit-guess-challenge">Valider</button>
-    </div>
-
-    <div id="feedback-challenge" class="feedback"></div>
-  </div>
-
-
-  
 <!-- ✅ POPIN INSTALLATION -->
 <div id="install-modal" class="modal hidden">
   <div class="install-content">
