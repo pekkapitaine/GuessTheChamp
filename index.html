@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -19,165 +20,170 @@
 
   <title>LoL Pixel Guesser</title>
 </head>
+
 <body>
-<!-- 🌟 ACCUEIL -->
-<div class="container" id="welcome-screen">
-  <img src="./assets/interface/LPG_Title.png" alt="LoL Pixel Guesser" class="game-logo">
+  <!-- 🌟 ACCUEIL -->
+  <div class="container" id="welcome-screen">
+    <img src="./assets/interface/LPG_Title.png" alt="LoL Pixel Guesser" class="game-logo">
 
-  <div class="modes-container">
-    <!-- MODE INFINI -->
-    <div class="mode-section">
-      <h2>♾️ Mode Infini</h2>
-      <div class="card-container">
-        <div class="difficulty-card facile" data-difficulty="facile">
-          <img src="./assets/smileys/easy_smiley.png" class="smiley">
-          <h3>Facile</h3>
-          <p>Débutant tranquille</p>
+    <div class="modes-container">
+      <!-- MODE INFINI -->
+      <div class="mode-section">
+        <h2>♾️ Mode Infini</h2>
+        <div class="card-container">
+          <div class="difficulty-card facile" data-difficulty="facile">
+            <img src="./assets/smileys/easy_smiley.png" class="smiley">
+            <h3>Facile</h3>
+            <p>Débutant tranquille</p>
+          </div>
+          <div class="difficulty-card moyen" data-difficulty="moyen">
+            <img src="./assets/smileys/medium_smiley.png" class="smiley">
+            <h3>Moyen</h3>
+            <p>Un peu de piquant</p>
+          </div>
+          <div class="difficulty-card difficile" data-difficulty="difficile">
+            <img src="./assets/smileys/hard_smiley.png" class="smiley">
+            <h3>Difficile</h3>
+            <p>Challenge sérieux</p>
+          </div>
+          <div class="difficulty-card extreme" data-difficulty="extreme">
+            <img src="./assets/smileys/extreme_smiley.png" class="smiley">
+            <h3>Extreme</h3>
+            <p>Fou du pixel !</p>
+          </div>
         </div>
-        <div class="difficulty-card moyen" data-difficulty="moyen">
-          <img src="./assets/smileys/medium_smiley.png" class="smiley">
-          <h3>Moyen</h3>
-          <p>Un peu de piquant</p>
-        </div>
-        <div class="difficulty-card difficile" data-difficulty="difficile">
-          <img src="./assets/smileys/hard_smiley.png" class="smiley">
-          <h3>Difficile</h3>
-          <p>Challenge sérieux</p>
-        </div>
-        <div class="difficulty-card extreme" data-difficulty="extreme">
-          <img src="./assets/smileys/extreme_smiley.png" class="smiley">
-          <h3>Extreme</h3>
-          <p>Fou du pixel !</p>
+        <div class="skin-option">
+          <input type="checkbox" id="include-skins">
+          <label for="include-skins">Inclure les skins</label>
         </div>
       </div>
-      <div class="skin-option">
-        <input type="checkbox" id="include-skins">
-        <label for="include-skins">Inclure les skins</label>
+
+      <!-- MODE DÉFI -->
+      <div class="mode-section">
+        <h2>⚡ Mode Défi</h2>
+        <p>Le divertissement à son prime</p>
+        <a href="./challenges.html" id="mode-challenge-btn" class="challenge-btn">Jouer</a>
       </div>
     </div>
-
-    <!-- MODE DÉFI -->
-    <div class="mode-section">
-      <h2>⚡ Mode Défi</h2>
-      <p>Le divertissement à son prime</p>
-      <a href="./challenges.html" id="mode-challenge-btn" class="challenge-btn">Jouer</a>
-    </div>
+    <footer>
+      <p>© 2025 LPG LolPixelGuesser. Tous droits réservés. Pekkapitaine corp.</p>
+    </footer>
   </div>
-  <footer>
-    <p>© 2025 Devine le Champion. Tous droits réservés. Pekkapitaine corp. lol-pixel-guesser-v0.0.www</p>
-  </footer>
-</div>
 
   <!-- ♾️ MODE INFINI -->
-<div class="container" id="infinite-mode" style="display:none;">
-  <button id="back-from-infinite" class="back-btn"><img src="assets/interface/back_arrow.svg"></button>
+  <div class="container" id="infinite-mode" style="display:none;">
+    <button id="back-from-infinite" class="back-btn"><img src="assets/interface/back_arrow.svg"></button>
 
-  <h2 id="mode-infini-title"></h2>
+    <h2 id="mode-infini-title"></h2>
 
-  <div class="game-area">
-    <div class="side-panel left stats-panel">
+    <div class="game-area">
+      <div class="side-panel left stats-panel">
 
-      <div class="timer-block">
-        <div class="timer-label">⏱️ Temps</div>
-        <div id="timer" class="timer-value">00:00</div>
+        <div class="timer-block">
+          <div class="timer-label">⏱️ Temps</div>
+          <div id="timer" class="timer-value">00:00</div>
+        </div>
+
+        <div class="stats-block">
+          <div class="stat-row">
+            <span class="stat-label">🔍 Tentatives :</span>
+            <span id="stat-attempts" class="stat-value">0</span>
+          </div>
+
+          <div class="stat-row">
+            <span class="stat-label">✅ Bons :</span>
+            <span id="stat-correct" class="stat-value">0</span>
+          </div>
+
+          <div class="stat-row">
+            <span class="stat-label">🔥 Série :</span>
+            <span id="stat-streak" class="stat-value">0</span>
+          </div>
+
+          <div class="stat-row">
+            <span class="stat-label">📊 Ratio :</span>
+            <span id="stat-ratio" class="stat-value">0</span>
+          </div>
+        </div>
+
       </div>
 
-      <div class="stats-block">
-        <div class="stat-row">
-          <span class="stat-label">🔍 Tentatives :</span>
-          <span id="stat-attempts" class="stat-value">0</span>
-        </div>
 
-        <div class="stat-row">
-          <span class="stat-label">✅ Bons :</span>
-          <span id="stat-correct" class="stat-value">0</span>
-        </div>
-
-        <div class="stat-row">
-          <span class="stat-label">🔥 Série :</span>
-          <span id="stat-streak" class="stat-value">0</span>
-        </div>
-
-        <div class="stat-row">
-          <span class="stat-label">📊 Ratio :</span>
-          <span id="stat-ratio" class="stat-value">0</span>
-        </div>
+      <div class="image-container">
+        <img id="champ-image" src="" alt="Champion Pixelisé">
+        <div id="result" class="feedback"></div>
       </div>
 
+      <div class="side-panel right">
+        <div class="history">
+          <h3>Historique</h3>
+          <ul id="history-list"></ul>
+        </div>
+      </div>
     </div>
 
-
-    <div class="image-container">
-      <img id="champ-image" src="" alt="Champion Pixelisé">
-      <div id="result" class="feedback"></div>
+    <div class="guess">
+      <input type="text" id="champ-input" placeholder="Tape le nom du champion...">
+      <div id="suggestions" class="suggestions"></div>
     </div>
 
-    <div class="side-panel right">
-      <div class="history">
-        <h3>Historique</h3>
-        <ul id="history-list"></ul>
+    <button id="skip-current-champ">Passer</button>
+  </div>
+
+  <!-- ✅ POPIN INSTALLATION -->
+  <div id="install-modal" class="modal hidden">
+    <div class="install-content">
+      <div class="install-header">
+        <button id="tab-android" class="active">Android <br> Windows</button>
+        <button id="tab-ios">iOS <br>Apple</button>
+        <span id="close-modal">✖</span>
+      </div>
+
+      <div class="install-body">
+        <!-- Android section -->
+        <p>Il semblerait que tu n’as pas encore installé l’app !</p>
+        <div id="content-android" class="install-section">
+          <p>C'est tout simple, clique juste sur le bouton ci-dessous.</p><br>
+          <button id="install-btn" class="install-btn">📲 Installer LPG</button>
+        </div>
+
+        <!-- iOS section -->
+        <div id="content-ios" class="install-section hidden">
+          Installation en 4 étapes, en moins de 30s. <br> <u><b>IMPORTANT</b></u>: L'installation ne peut se faire que
+          dans Safari.
+          <br><a href="https://pekkapitaine.github.io/GuessTheChamp/">Ouvre moi dans Safari :)</a><br><br>
+          <ol>
+            <li>Appuie sur les 3 points en bas à droite <img src="assets/ios_steps/step1.png" alt="Etape 1"></li>
+            <li>Appuie sur Partager<img src="assets/ios_steps/step2.png" alt="Etape 2"></li>
+            <li>choisi 'Sur l'écran d'accueil'<img src="assets/ios_steps/step3.png" alt="Etape 3"></li>
+            <li>Enfin valide bien 'Ouvrir comme app web' puis 'Ajouter'<img src="assets/ios_steps/step4.png"
+                alt="Etape 4"></li>
+          </ol>
+          Et voila !
+        </div>
       </div>
     </div>
   </div>
 
-  <div class="guess">
-    <input type="text" id="champ-input" placeholder="Tape le nom du champion...">
-    <div id="suggestions" class="suggestions"></div>
-  </div>
-
-  <button id="skip-current-champ">Passer</button>
-</div>
-
-<!-- ✅ POPIN INSTALLATION -->
-<div id="install-modal" class="modal hidden">
-  <div class="install-content">
-    <div class="install-header">
-      <button id="tab-android" class="active">Android <br> Windows</button>
-      <button id="tab-ios">iOS <br>Apple</button>
-      <span id="close-modal">✖</span>
-    </div>
-
-    <div class="install-body">
-      <!-- Android section -->
-      <p>Il semblerait que tu n’as pas encore installé l’app !</p>
-      <div id="content-android" class="install-section">
-        <p>C'est tout simple, clique juste sur le bouton ci-dessous.</p><br>
-        <button id="install-btn" class="install-btn">📲 Installer LPG</button>
-      </div>
- 
-      <!-- iOS section -->
-      <div id="content-ios" class="install-section hidden">
-        Installation en 4 étapes, en moins de 30s. <br> <u><b>IMPORTANT</b></u>: L'installation ne peut se faire que dans Safari. 
-        <br><a href="https://pekkapitaine.github.io/GuessTheChamp/">Ouvre moi dans Safari :)</a><br><br>
-        <ol>
-          <li>Appuie sur les 3 points en bas à droite <img src="assets/ios_steps/step1.png" alt="Etape 1"></li>
-          <li>Appuie sur Partager<img src="assets/ios_steps/step2.png" alt="Etape 2"></li>
-          <li>choisi 'Sur l'écran d'accueil'<img src="assets/ios_steps/step3.png" alt="Etape 3"></li>
-          <li>Enfin valide bien 'Ouvrir comme app web' puis 'Ajouter'<img src="assets/ios_steps/step4.png" alt="Etape 4"></li>
-        </ol>
-        Et voila !
-      </div>
-    </div>
-  </div>
-</div>
-
-<div id="maj-modal" class="modal hidden">
-  <div class="install-content">
-    <div class="install-header" style="justify-content: space-between;"> NOUVELLE MAJ DISPONIBLE !!!<span id="close-modal">✖</span></div>
-    <div class="install-body">
-      <button id="maj-btn" class="install-btn">📲 Mettre à jour LPG</button>
-    <ul>
-      <li>V1 (actuelle)</li>
+  <div id="maj-modal" class="modal hidden">
+    <div class="install-content">
+      <div class="install-header" style="justify-content: space-between;"> NOUVELLE MAJ DISPONIBLE !!!<span
+          id="close-modal">✖</span></div>
+      <div class="install-body">
+        <button id="maj-btn" class="install-btn">📲 Mettre à jour LPG</button>
         <ul>
-          <li>Mode Infini avec 4 difficultés</li>
-          <li>Inclusions de skins possible</li>
+          <li>V1 (actuelle)</li>
+          <ul>
+            <li>Mode Infini avec 4 difficultés</li>
+            <li>Inclusions de skins possible</li>
+          </ul>
         </ul>
-    </ul>
+      </div>
     </div>
   </div>
-</div>
   <!-- ⚙️ Scripts -->
   <script type="module" src="js_logic/app.js"></script>
   <script src="sw.js"></script>
 </body>
+
 </html>
